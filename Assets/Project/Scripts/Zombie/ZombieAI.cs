@@ -14,26 +14,44 @@ public class ZombieAI : MonoBehaviour
     [SerializeField] private int attackDamage = 10;
     [SerializeField] private float attackCooldown = 1.2f;
 
+    [Header("Target Arrow")]
+    [SerializeField] private Transform targetArrow;
+    [SerializeField] private bool showTargetArrow = true;
+    [SerializeField] private float arrowHeight = 2f;
+    [SerializeField] private float arrowYawOffset = 270f;
+
     private Rigidbody rb;
     private float lastAttackTime;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        UpdateTargetArrow(false);
+    }
+
+    private void OnDisable()
+    {
+        UpdateTargetArrow(false);
     }
 
     private void FixedUpdate()
     {
-        if (target == null)
+        if (target == null || !target.gameObject.activeInHierarchy)
+        {
+            UpdateTargetArrow(false);
             return;
+        }
 
         float distance = Vector3.Distance(transform.position, target.position);
+        bool canSeeTarget = distance <= detectRange;
+
+        UpdateTargetArrow(canSeeTarget);
 
         if (distance <= attackRange)
         {
             Attack();
         }
-        else if (distance <= detectRange)
+        else if (canSeeTarget)
         {
             ChaseTarget();
         }
@@ -70,5 +88,28 @@ public class ZombieAI : MonoBehaviour
         }
 
         Debug.Log("Zombie Attack");
+    }
+
+    private void UpdateTargetArrow(bool isVisible)
+    {
+        if (targetArrow == null)
+            return;
+
+        targetArrow.gameObject.SetActive(showTargetArrow && isVisible);
+
+        if (!showTargetArrow || !isVisible || target == null)
+            return;
+
+        // Keep the arrow above the zombie while it is tracking the player.
+        targetArrow.position = transform.position + Vector3.up * arrowHeight;
+
+        // Rotate the arrow so it points toward the player.
+        Vector3 directionToTarget = target.position - transform.position;
+        directionToTarget.y = 0f;
+
+        if (directionToTarget == Vector3.zero)
+            return;
+
+        targetArrow.rotation = Quaternion.LookRotation(directionToTarget) * Quaternion.Euler(90f, arrowYawOffset, 0f);
     }
 }
