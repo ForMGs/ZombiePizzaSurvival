@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 293683994}
   - component: {fileID: 293683993}
   - component: {fileID: 293683995}
+  - component: {fileID: 293683996}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -285,6 +286,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
+--- !u!114 &293683996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293683988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a651974132dd184683b098db1e5b5b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackDamage: 10
+  attackRange: 1.8
+  attackRadius: 1.2
+  attackCooldown: 0.5
+  zombieLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  showAttackRange: 1
+  attackRangeVisibleTime: 0.15
+  attackRangeLineHeight: 0.05
+  attackRangeSegments: 48
+  attackRangeColor: {r: 1, g: 0.2, b: 0.1, a: 0.85}
 --- !u!1 &522685044
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,6 +693,25 @@ MonoBehaviour:
   target: {fileID: 293683992}
   offset: {x: 0, y: 12, z: -8}
   followSpeed: 8
+--- !u!1 &1717591066 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1634420479605823200, guid: b289112e99f869d4b901d485deeacbda,
+    type: 3}
+  m_PrefabInstance: {fileID: 4066051381894958664}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1717591073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1717591066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 453127179abf4d0418e08ca51d523dc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 30
 --- !u!1001 &4066051381894958664
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -731,6 +775,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zombie
       objectReference: {fileID: 0}
+    - target: {fileID: 1634420479605823200, guid: b289112e99f869d4b901d485deeacbda,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6985438008787849665, guid: b289112e99f869d4b901d485deeacbda,
         type: 3}
       propertyPath: target
@@ -739,7 +788,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1634420479605823200, guid: b289112e99f869d4b901d485deeacbda,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1717591073}
   m_SourcePrefab: {fileID: 100100000, guid: b289112e99f869d4b901d485deeacbda, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
