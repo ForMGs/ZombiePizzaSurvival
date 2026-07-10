@@ -17,7 +17,8 @@ public class ZombieAI : MonoBehaviour
     [Header("Target Arrow")]
     [SerializeField] private Transform targetArrow;
     [SerializeField] private bool showTargetArrow = true;
-    [SerializeField] private float arrowHeight = 2f;
+    [SerializeField] private float arrowForwardDistance = 1.2f;
+    [SerializeField] private float arrowGroundHeight = 0.15f;
     [SerializeField] private float arrowYawOffset = 270f;
 
     private Rigidbody rb;
@@ -100,16 +101,19 @@ public class ZombieAI : MonoBehaviour
         if (!showTargetArrow || !isVisible || target == null)
             return;
 
-        // Keep the arrow above the zombie while it is tracking the player.
-        targetArrow.position = transform.position + Vector3.up * arrowHeight;
-
-        // Rotate the arrow so it points toward the player.
         Vector3 directionToTarget = target.position - transform.position;
         directionToTarget.y = 0f;
 
-        if (directionToTarget == Vector3.zero)
+        float targetDistance = directionToTarget.magnitude;
+
+        if (targetDistance <= 0.001f)
             return;
 
+        directionToTarget /= targetDistance;
+        float arrowDistance = Mathf.Min(arrowForwardDistance, targetDistance * 0.5f);
+
+        // Place the arrow in front of the zombie so it points toward the target.
+        targetArrow.position = transform.position + directionToTarget * arrowDistance + Vector3.up * arrowGroundHeight;
         targetArrow.rotation = Quaternion.LookRotation(directionToTarget) * Quaternion.Euler(90f, arrowYawOffset, 0f);
     }
 }

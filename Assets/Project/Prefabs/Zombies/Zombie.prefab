@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1286838796650603295}
   - component: {fileID: 6143737223495678334}
   - component: {fileID: 6985438008787849665}
+  - component: {fileID: 2459847839187245102}
+  - component: {fileID: 8204579362376340619}
   m_Layer: 6
   m_Name: Zombie
   m_TagString: Untagged
@@ -160,7 +162,46 @@ MonoBehaviour:
   attackCooldown: 1.2
   targetArrow: {fileID: 5143143822548504922}
   showTargetArrow: 1
-  arrowHeight: 2
+  arrowForwardDistance: 1.2
+  arrowGroundHeight: 0.15
+  arrowYawOffset: 270
+--- !u!114 &2459847839187245102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634420479605823200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 453127179abf4d0418e08ca51d523dc6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 30
+  showHealthBar: 1
+  healthBarOffset: {x: 0, y: 2.4, z: 0}
+  healthBarSize: {x: 1.2, y: 0.12}
+  healthBarBackColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.75}
+  healthBarFillColor: {r: 0.9, g: 0.15, b: 0.1, a: 0.95}
+--- !u!114 &8204579362376340619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634420479605823200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 151927ce91127464c96dda0a5122d1b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemPrefab: {fileID: 6216255046385890777, guid: 2361a6cff8f74974c8084c28458c839c, type: 3}
+  dropChance: 0.8
+  minDropRadius: 0.4
+  maxDropRadius: 0.8
+  dropHeight: 0.45
+  minAmount: 1
+  maxAmount: 2
 --- !u!1 &6809762963634853702
 GameObject:
   m_ObjectHideFlags: 0
