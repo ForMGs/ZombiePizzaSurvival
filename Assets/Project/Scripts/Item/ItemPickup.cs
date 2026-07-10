@@ -70,12 +70,27 @@ public class ItemPickup : MonoBehaviour
     {
         if (isPickedUp)
             return;
+        Inventory inventory = null;
+
+        if(collectTarget != null)
+        {
+            inventory = collectTarget.GetComponentInParent<Inventory>();
+        }
+
+        if(inventory == null)
+        {
+            Debug.LogWarning($"Inventory not found item pickup : {itemType}");
+            isBeingCollected = false;
+            basePosition = transform.position;
+            return;
+        }
 
         isPickedUp = true;
+        inventory.AddItem(itemType, amount);
         Debug.Log($"Picked up item: {itemType}, Amount: {amount}");
-
         // Later, connect this to the inventory system.
         Destroy(gameObject);
+
     }
 
     private void MoveToCollectTarget()
