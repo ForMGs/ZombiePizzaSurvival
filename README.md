@@ -40,6 +40,7 @@ Assets
     ├── Animations
     ├── Art
     │   ├── Characters
+    │   ├── Icons (추가 2026-07-09)
     │   ├── Zombies
     │   ├── Props
     │   ├── Weapons
@@ -63,6 +64,7 @@ Assets
     │   ├── Inventory
     │   ├── Crafting
     │   ├── Upgrade
+    │   ├── item (추가 2026-07-10)
     │   ├── UI
     │   └── Save
     ├── ScriptableObjects
