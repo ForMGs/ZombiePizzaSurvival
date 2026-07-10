@@ -10,12 +10,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rotationSpeed = 12f;
 
     private Rigidbody rb;
+    private PlayerAttack playerAttack;
     private Vector3 moveDirection;
     private Vector3 aimDirection;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        playerAttack = GetComponent<PlayerAttack>();
 
         if (aimCamera == null)
         {
@@ -46,7 +48,8 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 nextPosition = rb.position + moveDirection * moveSpeed * Time.fixedDeltaTime;
+        Vector3 currentMoveDirection = CanMove() ? moveDirection : Vector3.zero;
+        Vector3 nextPosition = rb.position + currentMoveDirection * moveSpeed * Time.fixedDeltaTime;
         rb.MovePosition(nextPosition);
 
         if (aimDirection != Vector3.zero)
@@ -76,5 +79,10 @@ public class PlayerController : MonoBehaviour
             return;
 
         aimDirection = direction.normalized;
+    }
+
+    private bool CanMove()
+    {
+        return playerAttack == null || !playerAttack.IsMovementLockedByAttack;
     }
 }

@@ -135,9 +135,10 @@ GameObject:
   - component: {fileID: 293683993}
   - component: {fileID: 293683995}
   - component: {fileID: 293683996}
+  - component: {fileID: 293683997}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -273,6 +274,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
+  aimCamera: {fileID: 0}
+  rotationSpeed: 12
 --- !u!114 &293683995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,6 +305,8 @@ MonoBehaviour:
   attackRange: 1.8
   attackRadius: 1.2
   attackCooldown: 0.5
+  attackMoveLockDuration: 0.5
+  canMoveWhileAttacking: 0
   zombieLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -310,6 +315,32 @@ MonoBehaviour:
   attackRangeLineHeight: 0.05
   attackRangeSegments: 48
   attackRangeColor: {r: 1, g: 0.2, b: 0.1, a: 0.85}
+--- !u!114 &293683997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 293683988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30b0a74b8f74b5f85a119bed3cc1a11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collectKey: 102
+  minCollectRadius: 0.8
+  maxCollectRadius: 4
+  radiusGrowSpeed: 3
+  itemLayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  itemPullSpeed: 8
+  pickupDistance: 0.8
+  showCollectRange: 1
+  rangeLineHeight: 0.05
+  rangeSegments: 72
+  rangeLineWidth: 0.05
+  rangeColor: {r: 0.2, g: 0.85, b: 1, a: 0.85}
 --- !u!1 &522685044
 GameObject:
   m_ObjectHideFlags: 0
@@ -693,25 +724,6 @@ MonoBehaviour:
   target: {fileID: 293683992}
   offset: {x: 0, y: 12, z: -8}
   followSpeed: 8
---- !u!1 &1717591066 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1634420479605823200, guid: b289112e99f869d4b901d485deeacbda,
-    type: 3}
-  m_PrefabInstance: {fileID: 4066051381894958664}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1717591073
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1717591066}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 453127179abf4d0418e08ca51d523dc6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 30
 --- !u!1001 &4066051381894958664
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -780,6 +792,21 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 5143143822548504922, guid: b289112e99f869d4b901d485deeacbda,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5143143822548504922, guid: b289112e99f869d4b901d485deeacbda,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6809762963634853702, guid: b289112e99f869d4b901d485deeacbda,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6985438008787849665, guid: b289112e99f869d4b901d485deeacbda,
         type: 3}
       propertyPath: target
@@ -788,11 +815,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1634420479605823200, guid: b289112e99f869d4b901d485deeacbda,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1717591073}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b289112e99f869d4b901d485deeacbda, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

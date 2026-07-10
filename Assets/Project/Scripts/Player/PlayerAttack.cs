@@ -7,6 +7,10 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float attackRange = 1.8f;
     [SerializeField] private float attackRadius = 1.2f;
     [SerializeField] private float attackCooldown = 0.5f;
+    [SerializeField] private float attackMoveLockDuration = 0.5f;
+
+    [Header("Weapon Movement")]
+    [SerializeField] private bool canMoveWhileAttacking = false;
 
     [Header("Target")]
     [SerializeField] private LayerMask zombieLayer;
@@ -19,8 +23,11 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private Color attackRangeColor = new Color(1f, 0.2f, 0.1f, 0.85f);
 
     private float lastAttackTime;
+    private float attackMoveLockEndTime;
     private float hideAttackRangeTime;
     private LineRenderer attackRangeRenderer;
+
+    public bool IsMovementLockedByAttack => !canMoveWhileAttacking && Time.time < attackMoveLockEndTime;
 
     private void Awake()
     {
@@ -47,6 +54,7 @@ public class PlayerAttack : MonoBehaviour
             return;
 
         lastAttackTime = Time.time;
+        attackMoveLockEndTime = Time.time + attackMoveLockDuration;
 
         // Place the attack hit area in front of the player.
         Vector3 attackCenter = transform.position + transform.forward * attackRange;
@@ -69,6 +77,17 @@ public class PlayerAttack : MonoBehaviour
         }
 
         Debug.Log($"Player Attack - Hit Count: {hitZombies.Length}");
+    }
+
+    public void SetCanMoveWhileAttacking(bool canMove)
+    {
+        canMoveWhileAttacking = canMove;
+    }
+
+    public void SetWeaponMovementOptions(bool canMoveDuringAttack, float moveLockDuration)
+    {
+        canMoveWhileAttacking = canMoveDuringAttack;
+        attackMoveLockDuration = Mathf.Max(0f, moveLockDuration);
     }
 
     private void CreateAttackRangeRenderer()
