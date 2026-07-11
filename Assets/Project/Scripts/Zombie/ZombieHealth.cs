@@ -17,12 +17,14 @@ public class ZombieHealth : MonoBehaviour
     private Camera mainCamera;
     private Canvas healthBarCanvas;
     private RectTransform healthBarFillRect;
-
+    private Animator animator;
+    private bool isDead;
+    private static readonly int deadHash = Animator.StringToHash("Dead");
     private void Awake()
     {
         currentHealth = maxHealth;
         mainCamera = Camera.main;
-
+        animator = GetComponentInChildren<Animator>();
         CreateHealthBar();
         UpdateHealthBar();
     }
@@ -34,6 +36,8 @@ public class ZombieHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        if (isDead)
+            return;
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
 
@@ -49,13 +53,34 @@ public class ZombieHealth : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("Zombie Dead");
+        if (isDead)
+            return;
+        isDead = true;
+        animator?.SetBool(deadHash, true);
+
+        ZombieAI zombieAI = GetComponent<ZombieAI>();
+        if (zombieAI != null)
+            zombieAI.enabled = false;
+
+        Collider zombieCollider = GetComponent<Collider>();
+        if (zombieCollider != null)
+            zombieCollider.enabled = false;
+         Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
         ZombieDropper dropper = GetComponent<ZombieDropper>();
+        if (dropper != null)
+            dropper.DropItem();
+
         if (dropper != null)
         {
             dropper.DropItem();
         }
-        Destroy(gameObject);
+        
+        Destroy(gameObject,2f);
     }
 
     private void CreateHealthBar()

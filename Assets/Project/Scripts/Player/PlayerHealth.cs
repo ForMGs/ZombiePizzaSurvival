@@ -7,6 +7,9 @@ public class PlayerHealth : MonoBehaviour
 
     private int currentHealth;
 
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -14,6 +17,7 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
+        Debug.Log("damage : " + damage);
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
 
@@ -23,6 +27,12 @@ public class PlayerHealth : MonoBehaviour
         {
             Die();
         }
+    }
+
+    public void Heal(int amount)
+    {
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
     }
 
     private void Die()

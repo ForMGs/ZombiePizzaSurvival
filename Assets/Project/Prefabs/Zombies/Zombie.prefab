@@ -54,7 +54,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1634420479605823200}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -195,7 +195,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 151927ce91127464c96dda0a5122d1b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 6216255046385890777, guid: 2361a6cff8f74974c8084c28458c839c, type: 3}
+  itemPrefab: {fileID: 6216255046385890777, guid: 2361a6cff8f74974c8084c28458c839c,
+    type: 3}
   dropChance: 0.8
   minDropRadius: 0.4
   maxDropRadius: 0.8

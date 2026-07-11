@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -6,11 +7,14 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private int attackDamage = 10;
     [SerializeField] private float attackRange = 1.8f;
     [SerializeField] private float attackRadius = 1.2f;
+    [SerializeField , Range(0f, 360f)] private float attackAngle = 90f;
     [SerializeField] private float attackCooldown = 0.5f;
     [SerializeField] private float attackMoveLockDuration = 0.5f;
 
     [Header("Weapon Movement")]
     [SerializeField] private bool canMoveWhileAttacking = false;
+    [Header("Weapon")]
+    [SerializeField] private WeaponController weaponController;
 
     [Header("Target")]
     [SerializeField] private LayerMask zombieLayer;
@@ -32,6 +36,10 @@ public class PlayerAttack : MonoBehaviour
     private void Awake()
     {
         CreateAttackRangeRenderer();
+        if(weaponController == null)
+        {
+            weaponController = GetComponent<WeaponController>();
+        }
     }
 
     private void Update()
@@ -53,29 +61,55 @@ public class PlayerAttack : MonoBehaviour
         if (Time.time < lastAttackTime + attackCooldown)
             return;
 
+        if(weaponController == null || weaponController.CurrentWeapon == null)
+        {
+            Debug.LogWarning("맨손공격!!!");
+        }
+        
+        WeaponData currentWeapon = weaponController != null ? weaponController.CurrentWeapon : null;
+        
+        int damage= currentWeapon != null ? currentWeapon.damage : attackDamage;
+
         lastAttackTime = Time.time;
+
         attackMoveLockEndTime = Time.time + attackMoveLockDuration;
 
-        // Place the attack hit area in front of the player.
-        Vector3 attackCenter = transform.position + transform.forward * attackRange;
-        ShowAttackRange(attackCenter);
+       
+        ShowAttackRange();
 
         Collider[] hitZombies = Physics.OverlapSphere(
-            attackCenter,
-            attackRadius,
+            transform.position,
+            attackRange,
             zombieLayer
         );
 
-        foreach (Collider hitZombie in hitZombies)
-        {
-            ZombieHealth zombieHealth = hitZombie.GetComponent<ZombieHealth>();
+        HashSet<ZombieHealth> damagedZombies = new HashSet<ZombieHealth>();
 
-            if (zombieHealth != null)
+        foreach(Collider hitZombie in hitZombies)
+        {
+            Vector3 directionToZombie = hitZombie.transform.position - transform.position;
+            directionToZombie.y = 0f;
+
+            if(directionToZombie.sqrMagnitude <=0.001f)
+                continue;
+            
+            float angleZombie = Vector3.Angle(
+                transform.forward,
+                directionToZombie
+            );
+
+            if (angleZombie > attackAngle * 0.5f)
+                continue;
+            
+            ZombieHealth zombieHealth =
+                hitZombie.GetComponentInParent<ZombieHealth>();
+            
+            if(zombieHealth != null && damagedZombies.Add(zombieHealth))
             {
-                zombieHealth.TakeDamage(attackDamage);
+                zombieHealth.TakeDamage(damage);
             }
         }
-
+    
         Debug.Log($"Player Attack - Hit Count: {hitZombies.Length}");
     }
 
@@ -109,37 +143,54 @@ public class PlayerAttack : MonoBehaviour
         attackRangeRenderer.endColor = attackRangeColor;
     }
 
-    private void ShowAttackRange(Vector3 attackCenter)
+    private void ShowAttackRange()
     {
         if (!showAttackRange || attackRangeRenderer == null)
             return;
-
-        DrawAttackRangeCircle(attackCenter);
+        
+        DrawAttackRangeFan();
         attackRangeRenderer.enabled = true;
         hideAttackRangeTime = Time.time + attackRangeVisibleTime;
     }
 
-    private void DrawAttackRangeCircle(Vector3 attackCenter)
+
+    private void DrawAttackRangeFan()
     {
-        // Draw the OverlapSphere hit area as a ground circle for top-down view.
-        for (int i = 0; i < attackRangeSegments; i++)
+        int arcPointCount = Mathf.Max(2, attackRangeSegments);
+
+        // 플레이어 위치 1개 + 부채꼴 곡선 점들 + 다시 플레이어 위치 1개
+        attackRangeRenderer.positionCount = arcPointCount + 2;
+        attackRangeRenderer.loop = false;
+
+        Vector3 origin =
+            transform.position + Vector3.up * attackRangeLineHeight;
+
+        // 부채꼴 시작점은 플레이어 위치
+        attackRangeRenderer.SetPosition(0, origin);
+
+        for (int i = 0; i < arcPointCount; i++)
         {
-            float angle = (float)i / attackRangeSegments * Mathf.PI * 2f;
-            Vector3 point = attackCenter + new Vector3(
-                Mathf.Cos(angle) * attackRadius,
-                attackRangeLineHeight,
-                Mathf.Sin(angle) * attackRadius
+            float t = (float)i / (arcPointCount - 1);
+
+            float angle = Mathf.Lerp(
+                -attackAngle * 0.5f,
+                attackAngle * 0.5f,
+                t
             );
 
-            attackRangeRenderer.SetPosition(i, point);
+            Vector3 direction =
+                Quaternion.Euler(0f, angle, 0f) * transform.forward;
+
+            Vector3 point =
+                origin + direction * attackRange;
+
+            attackRangeRenderer.SetPosition(i + 1, point);
         }
-    }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-
-        Vector3 attackCenter = transform.position + transform.forward * attackRange;
-        Gizmos.DrawWireSphere(attackCenter, attackRadius);
+        // 마지막 점을 다시 플레이어 위치로 연결
+        attackRangeRenderer.SetPosition(
+            arcPointCount + 1,
+            origin
+        );
     }
 }
