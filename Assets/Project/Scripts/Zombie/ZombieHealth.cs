@@ -20,6 +20,7 @@ public class ZombieHealth : MonoBehaviour
     private Animator animator;
     private bool isDead;
     private static readonly int deadHash = Animator.StringToHash("Dead");
+    private static readonly int hitHash = Animator.StringToHash("Hit");
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -38,6 +39,7 @@ public class ZombieHealth : MonoBehaviour
     {
         if (isDead)
             return;
+        animator?.SetTrigger(hitHash);
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);
 
@@ -75,11 +77,6 @@ public class ZombieHealth : MonoBehaviour
         if (dropper != null)
             dropper.DropItem();
 
-        if (dropper != null)
-        {
-            dropper.DropItem();
-        }
-        
         Destroy(gameObject,2f);
     }
 
