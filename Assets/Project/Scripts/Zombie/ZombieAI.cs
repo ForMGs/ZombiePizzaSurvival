@@ -24,9 +24,13 @@ public class ZombieAI : MonoBehaviour
     private Rigidbody rb;
     private float lastAttackTime;
 
+    private Animator animator;
+    private static readonly int SpeedHash = Animator.StringToHash("Speed");
+    private static readonly int AttackHash = Animator.StringToHash("Attack");
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
         UpdateTargetArrow(false);
     }
 
@@ -39,6 +43,7 @@ public class ZombieAI : MonoBehaviour
     {
         if (target == null || !target.gameObject.activeInHierarchy)
         {
+            animator?.SetFloat(SpeedHash, 0f);
             UpdateTargetArrow(false);
             return;
         }
@@ -50,11 +55,17 @@ public class ZombieAI : MonoBehaviour
 
         if (distance <= attackRange)
         {
+            animator?.SetFloat(SpeedHash,0f);
             Attack();
         }
         else if (canSeeTarget)
         {
+            animator?.SetFloat(SpeedHash, moveSpeed);
             ChaseTarget();
+        }
+        else
+        {
+            animator?.SetFloat(SpeedHash,0f);
         }
     }
 
@@ -80,6 +91,8 @@ public class ZombieAI : MonoBehaviour
             return;
 
         lastAttackTime = Time.time;
+        animator?.SetFloat(SpeedHash, 0f);
+        animator?.SetTrigger(AttackHash);
 
         PlayerHealth playerHealth = target.GetComponent<PlayerHealth>();
 
