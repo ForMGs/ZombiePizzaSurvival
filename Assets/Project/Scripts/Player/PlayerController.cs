@@ -10,13 +10,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rotationSpeed = 12f;
 
     private Rigidbody rb;
+    private Animator animator;
+    private static readonly int SpeedHash = Animator.StringToHash("Speed");
     private PlayerAttack playerAttack;
     private Vector3 moveDirection;
     private Vector3 aimDirection;
 
+    private static readonly int MoveXHash = Animator.StringToHash("MoveX");
+    private static readonly int MoveYHash = Animator.StringToHash("MoveY");
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        animator = GetComponentInChildren<Animator>();
         playerAttack = GetComponent<PlayerAttack>();
 
         if (aimCamera == null)
@@ -43,6 +48,11 @@ public class PlayerController : MonoBehaviour
             vertical = -1f;
 
         moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
+        Vector3 localMoveDirection = transform.InverseTransformDirection(moveDirection);
+        animator?.SetFloat(MoveXHash, localMoveDirection.x, 0.1f, Time.deltaTime);
+        animator?.SetFloat(MoveYHash, localMoveDirection.z, 0.1f, Time.deltaTime);
+        animator?.SetFloat(SpeedHash, moveDirection.magnitude, 0.1f, Time.deltaTime);
+        
         UpdateAimDirection();
     }
 

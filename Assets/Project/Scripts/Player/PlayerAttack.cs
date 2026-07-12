@@ -30,12 +30,16 @@ public class PlayerAttack : MonoBehaviour
     private float attackMoveLockEndTime;
     private float hideAttackRangeTime;
     private LineRenderer attackRangeRenderer;
+    private Animator animator;
+    private static readonly int AttackHash = Animator.StringToHash("Attack");
+
 
     public bool IsMovementLockedByAttack => !canMoveWhileAttacking && Time.time < attackMoveLockEndTime;
 
     private void Awake()
     {
         CreateAttackRangeRenderer();
+        animator = GetComponentInChildren<Animator>();
         if(weaponController == null)
         {
             weaponController = GetComponent<WeaponController>();
@@ -65,6 +69,7 @@ public class PlayerAttack : MonoBehaviour
         {
             Debug.LogWarning("맨손공격!!!");
         }
+        animator?.SetTrigger(AttackHash);
         
         WeaponData currentWeapon = weaponController != null ? weaponController.CurrentWeapon : null;
         
