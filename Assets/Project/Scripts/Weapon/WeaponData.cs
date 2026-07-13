@@ -12,10 +12,12 @@ public class WeaponData : ScriptableObject
     [Header("Attack Stats")]
     public int damage = 10;
     public float attackRange = 1.8f;
-    public float attackRadius = 1.2f; 
+    [Range(0f, 360f)] 
+    public float attackAngle = 90f;
     public float attackCooldown = 0.5f;
-    private float attackMoveLockDuration = 0.5f;
 
+    public float attackMoveLockDuration = 0.5f;
+   
     [Header("Long Range Settings")]
     public float longRangeDistance = 12f;
 
@@ -24,4 +26,9 @@ public class WeaponData : ScriptableObject
 
     [Header("UI")]
     public Sprite icon;
+
+    [Header("Equip Transform")]
+    public Vector3 equipLocalPosition;
+    public Vector3 equipLocalRotation;
+    public Vector3 equipLocalScale = Vector3.one;
 }

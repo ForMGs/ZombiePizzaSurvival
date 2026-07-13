@@ -52,8 +52,22 @@ public class WeaponController : MonoBehaviour
             weaponHolder.rotation,
             weaponHolder
         );
+        Transform weaponTransform = currentWeaponObject.transform;
+        weaponTransform.localPosition = weaponData.equipLocalPosition;
+        weaponTransform.localRotation = Quaternion.Euler(weaponData.equipLocalRotation);
+        weaponTransform.localScale = weaponData.equipLocalScale;
+    }
 
-        currentWeaponObject.transform.localPosition = Vector3.zero;
-        currentWeaponObject.transform.localRotation = Quaternion.identity;
+    public Transform CurrentMuzzle
+    {
+        get
+        {
+            if(currentWeaponObject == null)
+            {
+                return null;
+            }
+            WeaponVisual weaponVisual = currentWeaponObject.GetComponent<WeaponVisual>();
+            return weaponVisual != null ? weaponVisual.Muzzle : null;
+        }
     }
 }

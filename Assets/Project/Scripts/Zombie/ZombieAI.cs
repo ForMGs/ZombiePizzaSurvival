@@ -23,6 +23,7 @@ public class ZombieAI : MonoBehaviour
 
     private Rigidbody rb;
     private float lastAttackTime;
+    private bool isHit;
 
     private Animator animator;
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
@@ -45,6 +46,11 @@ public class ZombieAI : MonoBehaviour
         {
             animator?.SetFloat(SpeedHash, 0f);
             UpdateTargetArrow(false);
+            return;
+        }
+        if(isHit)
+        {
+            animator?.SetFloat(SpeedHash, 0f);
             return;
         }
 
@@ -128,5 +134,15 @@ public class ZombieAI : MonoBehaviour
         // Place the arrow in front of the zombie so it points toward the target.
         targetArrow.position = transform.position + directionToTarget * arrowDistance + Vector3.up * arrowGroundHeight;
         targetArrow.rotation = Quaternion.LookRotation(directionToTarget) * Quaternion.Euler(90f, arrowYawOffset, 0f);
+    }
+
+    public void BeginHit()
+    {
+        isHit = true;
+        animator?.SetFloat(SpeedHash, 0f);
+    }
+    public void EndHit()
+    {
+        isHit = false;
     }
 }
