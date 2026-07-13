@@ -39,6 +39,9 @@ public class ZombieHealth : MonoBehaviour
     {
         if (isDead)
             return;
+        ZombieAI zombieAI = GetComponent<ZombieAI>();
+    
+        zombieAI?.BeginHit();
         animator?.SetTrigger(hitHash);
         currentHealth -= damage;
         currentHealth = Mathf.Max(currentHealth, 0);

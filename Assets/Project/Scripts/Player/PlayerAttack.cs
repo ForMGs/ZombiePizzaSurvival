@@ -6,7 +6,6 @@ public class PlayerAttack : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private int attackDamage = 10;
     [SerializeField] private float attackRange = 1.8f;
-    [SerializeField] private float attackRadius = 1.2f;
     [SerializeField , Range(0f, 360f)] private float attackAngle = 90f;
     [SerializeField] private float attackCooldown = 0.5f;
     [SerializeField] private float attackMoveLockDuration = 0.5f;
@@ -31,7 +30,10 @@ public class PlayerAttack : MonoBehaviour
     private float hideAttackRangeTime;
     private LineRenderer attackRangeRenderer;
     private Animator animator;
+    private WeaponManager weaponManager;
+    private bool attackPending;
     private static readonly int AttackHash = Animator.StringToHash("Attack");
+    private static readonly int PistolAttackHash = Animator.StringToHash("PistolAttack");
 
 
     public bool IsMovementLockedByAttack => !canMoveWhileAttacking && Time.time < attackMoveLockEndTime;
@@ -44,6 +46,7 @@ public class PlayerAttack : MonoBehaviour
         {
             weaponController = GetComponent<WeaponController>();
         }
+        weaponManager = GetComponent<WeaponManager>();
     }
 
     private void Update()
@@ -62,60 +65,26 @@ public class PlayerAttack : MonoBehaviour
 
     private void Attack()
     {
-        if (Time.time < lastAttackTime + attackCooldown)
+        WeaponData weapon = weaponController != null ? weaponController.CurrentWeapon : null;
+        if(weapon == null)
             return;
 
-        if(weaponController == null || weaponController.CurrentWeapon == null)
-        {
-            Debug.LogWarning("맨손공격!!!");
-        }
-        animator?.SetTrigger(AttackHash);
-        
-        WeaponData currentWeapon = weaponController != null ? weaponController.CurrentWeapon : null;
-        
-        int damage= currentWeapon != null ? currentWeapon.damage : attackDamage;
+        if (Time.time < lastAttackTime + weapon.attackCooldown)
+            return;
 
         lastAttackTime = Time.time;
 
-        attackMoveLockEndTime = Time.time + attackMoveLockDuration;
-
-       
-        ShowAttackRange();
-
-        Collider[] hitZombies = Physics.OverlapSphere(
-            transform.position,
-            attackRange,
-            zombieLayer
-        );
-
-        HashSet<ZombieHealth> damagedZombies = new HashSet<ZombieHealth>();
-
-        foreach(Collider hitZombie in hitZombies)
+        attackMoveLockEndTime = Time.time + weapon.attackMoveLockDuration;
+        attackPending = true;
+        if (weapon.weaponType == WeaponType.Pistol)
         {
-            Vector3 directionToZombie = hitZombie.transform.position - transform.position;
-            directionToZombie.y = 0f;
-
-            if(directionToZombie.sqrMagnitude <=0.001f)
-                continue;
-            
-            float angleZombie = Vector3.Angle(
-                transform.forward,
-                directionToZombie
-            );
-
-            if (angleZombie > attackAngle * 0.5f)
-                continue;
-            
-            ZombieHealth zombieHealth =
-                hitZombie.GetComponentInParent<ZombieHealth>();
-            
-            if(zombieHealth != null && damagedZombies.Add(zombieHealth))
-            {
-                zombieHealth.TakeDamage(damage);
-            }
+            animator?.SetTrigger(PistolAttackHash);
         }
-    
-        Debug.Log($"Player Attack - Hit Count: {hitZombies.Length}");
+        else
+        {
+            animator?.SetTrigger(AttackHash);
+        }
+
     }
 
     public void SetCanMoveWhileAttacking(bool canMove)
@@ -197,5 +166,27 @@ public class PlayerAttack : MonoBehaviour
             arcPointCount + 1,
             origin
         );
+    }
+
+    public void OnAttackHit()
+    {
+        if(!attackPending)
+            return; 
+        
+        attackPending = false;
+
+        WeaponData weapon = weaponController != null ? weaponController.CurrentWeapon : null;
+
+        if(weapon ==null || weaponManager == null)
+            return; 
+        if(weapon.weaponType == WeaponType.Pistol)
+        {
+            weaponManager.FirePistol(weapon, zombieLayer);
+        }
+        else
+        {
+            weaponManager.MeleeAttack(weapon, zombieLayer);
+            ShowAttackRange();
+        }
     }
 }
