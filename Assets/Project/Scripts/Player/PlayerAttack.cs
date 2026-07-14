@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -14,6 +14,9 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private bool canMoveWhileAttacking = false;
     [Header("Weapon")]
     [SerializeField] private WeaponController weaponController;
+
+    [Header("UI")]
+    [SerializeField] private InventoryUI inventoryUI;   
 
     [Header("Target")]
     [SerializeField] private LayerMask zombieLayer;
@@ -47,17 +50,31 @@ public class PlayerAttack : MonoBehaviour
             weaponController = GetComponent<WeaponController>();
         }
         weaponManager = GetComponent<WeaponManager>();
+        if (inventoryUI == null)
+            inventoryUI = FindFirstObjectByType<InventoryUI>();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+        bool inventoryOpen =
+            inventoryUI != null &&
+            inventoryUI.IsOpen;
+        bool pointerOverUI =
+            EventSystem.current != null &&
+            EventSystem.current.IsPointerOverGameObject();
+
+        bool attackInput =
+            Input.GetKeyDown(KeyCode.Space) ||
+            Input.GetMouseButtonDown(0);
+
+        if (attackInput && !pointerOverUI && !inventoryOpen)
         {
             Attack();
         }
 
-        // Show the attack range briefly after each attack, then hide it.
-        if (attackRangeRenderer != null && attackRangeRenderer.enabled && Time.time >= hideAttackRangeTime)
+        if (attackRangeRenderer != null &&
+            attackRangeRenderer.enabled &&
+            Time.time >= hideAttackRangeTime)
         {
             attackRangeRenderer.enabled = false;
         }
@@ -188,5 +205,16 @@ public class PlayerAttack : MonoBehaviour
             weaponManager.MeleeAttack(weapon, zombieLayer);
             ShowAttackRange();
         }
+    }
+
+    public void CancelPendingAttack()
+    {
+        attackPending = false;
+
+        if (animator == null)
+            return;
+
+        animator.ResetTrigger(AttackHash);
+        animator.ResetTrigger(PistolAttackHash);
     }
 }

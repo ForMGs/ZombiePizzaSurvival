@@ -1,20 +1,13 @@
 using System;
-using UnityEngine;
 
 [Serializable]
-public class QuickSlotData
+public class InventorySlotData
 {
     public ItemData item;
     public int amount;
 
     public bool IsEmpty =>
         item == null || amount <= 0;
-
-    public Sprite Icon =>
-        item != null ? item.icon : null;
-
-    public string DisplayName =>
-        item != null ? item.displayName : "Empty";
 
     public void Clear()
     {

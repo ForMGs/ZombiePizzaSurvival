@@ -3,18 +3,15 @@ using UnityEngine;
 public class ItemPickup : MonoBehaviour
 {
     [Header("Item Info")]
-    [SerializeField] private ItemType itemType;
+    [SerializeField] private ItemData itemData;
     [SerializeField] private int amount = 1;
 
     [Header("Visual")]
     [SerializeField] private float rotateSpeed = 120f;
     [SerializeField] private float bobHeight = 0.12f;
     [SerializeField] private float bobSpeed = 4f;
-    [SerializeField] private Color fleshColor = new Color(0.9f, 0.15f, 0.12f, 1f);
-    [SerializeField] private Color clothColor = new Color(0.25f, 0.75f, 1f, 1f);
-    [SerializeField] private Color toothColor = new Color(1f, 0.92f, 0.55f, 1f);
 
-    public ItemType ItemType => itemType;
+    public ItemData ItemData => itemData;
     public int Amount => amount;
 
     private Renderer itemRenderer;
@@ -47,9 +44,9 @@ public class ItemPickup : MonoBehaviour
         transform.position = bobPosition;
     }
 
-    public void SetItem(ItemType type, int itemAmount)
+    public void SetItem(ItemData data, int itemAmount)
     {
-        itemType = type;
+        itemData = data;
         amount = itemAmount;
         basePosition = transform.position;
         ApplyVisuals();
@@ -79,15 +76,24 @@ public class ItemPickup : MonoBehaviour
 
         if(inventory == null)
         {
-            Debug.LogWarning($"Inventory not found item pickup : {itemType}");
+            Debug.LogWarning($"Inventory not found item pickup : {itemData.displayName}");
             isBeingCollected = false;
             basePosition = transform.position;
             return;
         }
 
+        
+        bool added = inventory.AddItem(itemData, amount);
+        if (!added)
+        {
+            Debug.Log("인벤토리 공간이 부족합니다.");
+            isPickedUp = false;
+            isBeingCollected = false;
+            basePosition = transform.position;
+            return;
+        }
         isPickedUp = true;
-        inventory.AddItem(itemType, amount);
-        Debug.Log($"Picked up item: {itemType}, Amount: {amount}");
+        Debug.Log($"Picked up item: {itemData.displayName}, Amount: {amount}");
         // Later, connect this to the inventory system.
         Destroy(gameObject);
 
@@ -117,29 +123,17 @@ public class ItemPickup : MonoBehaviour
         if (itemRenderer == null)
             return;
 
-        Color itemColor = GetItemColor();
+        Sprite itemIcon = GetItemSprite();
         Material material = itemRenderer.material;
 
-        if (material.HasProperty("_BaseColor"))
+        if (itemIcon != null)
         {
-            material.SetColor("_BaseColor", itemColor);
-        }
-        else if (material.HasProperty("_Color"))
-        {
-            material.SetColor("_Color", itemColor);
+            material.mainTexture = itemIcon.texture;
         }
     }
 
-    private Color GetItemColor()
+    private Sprite GetItemSprite()
     {
-        switch (itemType)
-        {
-            case ItemType.Cloth:
-                return clothColor;
-            case ItemType.Tooth:
-                return toothColor;
-            default:
-                return fleshColor;
-        }
+        return itemData != null ? itemData.icon : null;
     }
 }

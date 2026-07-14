@@ -12,10 +12,26 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private Image healthFill;
     [SerializeField] private TMP_Text healthText;
 
+    [SerializeField] private Color normalHealthColor =
+        new Color32(181, 71, 71, 255);
+
+    [SerializeField] private Color dangerHealthColor =
+        new Color32(231, 63, 63, 255);
+
     [Header("Inventory UI")]
     [SerializeField] private TMP_Text fleshText;
     [SerializeField] private TMP_Text clothText;
     [SerializeField] private TMP_Text toothText;
+
+    private void Awake()
+    {
+        if (healthText != null)
+        {
+            healthText.textWrappingMode = TextWrappingModes.NoWrap;
+            healthText.overflowMode = TextOverflowModes.Overflow;
+            healthText.fontSize = 26f;
+        }
+    }
 
     private void Update()
     {
@@ -26,18 +42,27 @@ public class PlayerHUD : MonoBehaviour
     private void UpdateHealthUI()
     {
         if (playerHealth == null)
-        return;
+            return;
 
-        float healthPercent = (float)playerHealth.CurrentHealth / playerHealth.MaxHealth;
+        int currentHealth = playerHealth.CurrentHealth;
+        int maxHealth = playerHealth.MaxHealth;
 
-        if(healthFill != null)
+        float healthPercent = maxHealth > 0
+            ? Mathf.Clamp01((float)currentHealth / maxHealth)
+            : 0f;
+
+        if (healthFill != null)
         {
             healthFill.fillAmount = healthPercent;
+            healthFill.color = healthPercent <= 0.25f
+                ? dangerHealthColor
+                : normalHealthColor;
         }
 
-        if(healthText != null)
+        if (healthText != null)
         {
-            healthText.text = $"{playerHealth.CurrentHealth} / {playerHealth.MaxHealth}";
+            healthText.text =
+                $"HP  {currentHealth} / {maxHealth}";
         }
     }
 
