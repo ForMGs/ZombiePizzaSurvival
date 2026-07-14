@@ -9,8 +9,13 @@ public class WeaponController : MonoBehaviour
     [SerializeField] private WeaponData currentWeapon;
 
     private GameObject currentWeaponObject; 
-
+    private PlayerAttack playerAttack;
     public WeaponData CurrentWeapon => currentWeapon;
+
+    private void Awake()
+    {
+        playerAttack = GetComponent<PlayerAttack>();
+    }
     public void EquipWeapon(WeaponData weaponData)
     {
         if(weaponData == null)
@@ -18,6 +23,7 @@ public class WeaponController : MonoBehaviour
             Debug.LogWarning("장착할 무기가 없습니다.");
             return;
         }
+        playerAttack?.CancelPendingAttack();
         currentWeapon = weaponData;
 
         ClearCurrentWeaponObject();
@@ -69,5 +75,13 @@ public class WeaponController : MonoBehaviour
             WeaponVisual weaponVisual = currentWeaponObject.GetComponent<WeaponVisual>();
             return weaponVisual != null ? weaponVisual.Muzzle : null;
         }
+    }
+
+    public void UnequipWeapon()
+    {
+        currentWeapon = null;
+
+        if (currentWeaponObject != null)
+            Destroy(currentWeaponObject);
     }
 }

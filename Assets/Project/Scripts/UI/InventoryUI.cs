@@ -1,65 +1,43 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
-    [SerializeField] private Inventory inventory;
+    [SerializeField] private GameObject inventoryOverlay;
     [SerializeField] private KeyCode toggleKey = KeyCode.I;
 
-    private bool isOpen;
+     public bool IsOpen { get; private set; }
 
     private void Awake()
     {
-        if (inventory == null)
+        if (inventoryOverlay == null)
         {
-            inventory = FindFirstObjectByType<Inventory>();
+            Debug.LogError("Inventory Overlay가 연결되지 않았습니다.");
         }
     }
-
+    private void Start()
+    {
+        SetOpen(false);
+    }
     private void Update()
     {
         if (Input.GetKeyDown(toggleKey))
-        {
-            isOpen = !isOpen;
-        }
+            SetOpen(!IsOpen);
     }
 
-    private void OnGUI()
+    private void SetOpen(bool open)
     {
-        if (!isOpen || inventory == null)
+        if (inventoryOverlay == null)
             return;
+        IsOpen = open;
+        inventoryOverlay.SetActive(open);
 
-        const float width = 180f;
-        const float lineHeight = 22f;
-        const float padding = 10f;
-
-        int lineCount = Mathf.Max(1, inventory.Items.Count);
-        float height = 35f + lineCount * lineHeight + padding;
-
-        GUI.Box(new Rect(10f, 10f, width, height), "인벤토리");
-
-        if (inventory.Items.Count == 0)
-        {
-            GUI.Label(
-                new Rect(20f, 40f, width - 20f, lineHeight),
-                "보유한 아이템이 없습니다."
-            );
-
-            return;
-        }
-
-        float y = 40f;
-
-        foreach (KeyValuePair<ItemType, int> item in inventory.Items)
-        {
-            string itemName = inventory.GetItemName(item.Key);
-
-            GUI.Label(
-                new Rect(20f, y, width - 20f, lineHeight),
-                $"{itemName}: {item.Value}개"
-            );
-
-            y += lineHeight;
-        }
+        Time.timeScale = open ? 0f : 1f;
     }
+
+    private void OnDisable()
+    {
+        Time.timeScale = 1f;
+    }
+
+    
 }

@@ -8,62 +8,102 @@ public class ZombieDropper : MonoBehaviour
     [SerializeField] private float minDropRadius = 0.4f;
     [SerializeField] private float maxDropRadius = 0.8f;
     [SerializeField] private float dropHeight = 0.45f;
-
-    [Header("Drop Amount")]
-    [SerializeField] private int minAmount = 1;
-    [SerializeField] private int maxAmount = 2;
+    [SerializeField] private DropEntry[] dropTable;
 
     public void DropItem()
     {
-        Debug.Log("드랍아이템함수 실행");
         if (itemPrefab == null)
-        {
-            Debug.Log("널?");
-            return;
-        }
-            
-
-        float randomValue = Random.value;
-
-        if (randomValue > dropChance)
             return;
 
-        ItemType droppedItem = GetRandomItemType();
-        int amount = Random.Range(minAmount, maxAmount + 1);
+        if (Random.value > dropChance)
+            return;
 
-        Vector2 randomCircle = Random.insideUnitCircle.normalized;
+        DropEntry selectedDrop = GetRandomDrop();
 
-        if (randomCircle == Vector2.zero)
+        if (selectedDrop == null)
         {
-            randomCircle = Vector2.right;
+            Debug.LogWarning(
+                "사용 가능한 드롭 데이터가 없습니다.");
+
+            return;
         }
 
-        float dropRadius = Random.Range(minDropRadius, maxDropRadius);
-        Vector3 dropOffset = new Vector3(randomCircle.x, 0f, randomCircle.y) * dropRadius;
-        Vector3 dropPosition = transform.position + dropOffset;
+        int minAmount =
+            Mathf.Max(1, selectedDrop.minAmount);
+
+        int maxAmount =
+            Mathf.Max(minAmount, selectedDrop.maxAmount);
+
+        int amount =
+            Random.Range(minAmount, maxAmount + 1);
+
+        Vector2 direction =
+            Random.insideUnitCircle.normalized;
+
+        if (direction == Vector2.zero)
+            direction = Vector2.right;
+
+        float radius =
+            Random.Range(minDropRadius, maxDropRadius);
+
+        Vector3 offset =
+            new Vector3(direction.x, 0f, direction.y)
+            * radius;
+
+        Vector3 dropPosition =
+            transform.position + offset;
+
         dropPosition.y = dropHeight;
 
-        ItemPickup item = Instantiate(itemPrefab, dropPosition, Quaternion.identity);
-        item.SetItem(droppedItem, amount);
+        ItemPickup pickup = Instantiate(
+            itemPrefab,
+            dropPosition,
+            Quaternion.identity);
 
-        Debug.Log($"좀비 드랍: {droppedItem}, 개수: {amount}");
+        pickup.SetItem(
+            selectedDrop.item,
+            amount);
     }
-
-    private ItemType GetRandomItemType()
+    private DropEntry GetRandomDrop()
     {
-        int randomValue = Random.Range(1, 101);
+        if (dropTable == null || dropTable.Length == 0)
+            return null;
 
-        if(randomValue <= 50)
+        float totalWeight = 0f;
+
+        foreach (DropEntry entry in dropTable)
         {
-            return ItemType.Flesh;
+            if (entry != null &&
+                entry.item != null &&
+                entry.weight > 0f)
+            {
+                totalWeight += entry.weight;
+            }
         }
-        else if(randomValue <= 85)
+
+        if (totalWeight <= 0f)
+            return null;
+
+        float randomValue =
+            Random.Range(0f, totalWeight);
+
+        foreach (DropEntry entry in dropTable)
         {
-            return ItemType.Cloth;
+            if (entry == null ||
+                entry.item == null ||
+                entry.weight <= 0f)
+            {
+                continue;
+            }
+
+            randomValue -= entry.weight;
+
+            if (randomValue <= 0f)
+                return entry;
         }
-        else
-        {
-            return ItemType.Tooth;
-        }
+
+        return null;
     }
+
+    
 }
