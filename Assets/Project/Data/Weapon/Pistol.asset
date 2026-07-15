@@ -27,6 +27,6 @@ MonoBehaviour:
   weaponPrefab: {fileID: 3252272391936718230, guid: 7b02346e757844745a09675ac4c82190,
     type: 3}
   icon: {fileID: 0}
-  equipLocalPosition: {x: -0.859, y: 0.3, z: -0.07}
-  equipLocalRotation: {x: -4.677, y: 4.873, z: 362.342}
-  equipLocalScale: {x: 70, y: 70, z: 70}
+  equipLocalPosition: {x: 0.00234, y: -0.00038, z: 0}
+  equipLocalRotation: {x: 0, y: 0, z: 0}
+  equipLocalScale: {x: 1, y: 1, z: 1}
