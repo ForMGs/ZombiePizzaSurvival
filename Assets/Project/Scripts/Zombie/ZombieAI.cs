@@ -24,7 +24,7 @@ public class ZombieAI : MonoBehaviour
     private Rigidbody rb;
     private float lastAttackTime;
     private bool isHit;
-
+    private bool isAttacking;
     private Animator animator;
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
     private static readonly int AttackHash = Animator.StringToHash("Attack");
@@ -48,7 +48,7 @@ public class ZombieAI : MonoBehaviour
             UpdateTargetArrow(false);
             return;
         }
-        if(isHit)
+        if(isHit || isAttacking)
         {
             animator?.SetFloat(SpeedHash, 0f);
             return;
@@ -95,7 +95,8 @@ public class ZombieAI : MonoBehaviour
     {
         if (Time.time < lastAttackTime + attackCooldown)
             return;
-
+        
+        isAttacking = true;
         lastAttackTime = Time.time;
         animator?.SetFloat(SpeedHash, 0f);
         animator?.SetTrigger(AttackHash);
@@ -147,5 +148,9 @@ public class ZombieAI : MonoBehaviour
     public void EndHit()
     {
         isHit = false;
+    }
+    public void EndAttack()
+    {
+        isAttacking = false;
     }
 }
