@@ -15,11 +15,25 @@ public class WeaponManager : MonoBehaviour
         Transform muzzle = weaponController.CurrentMuzzle;
 
         Vector3 origin = muzzle != null ? muzzle.position : transform.position + Vector3.up ;
-        Vector3 castOrigin = transform.position;
+        Vector3 castOrigin = origin;
 
         Vector3 direction = transform.forward;  
         //플레이어가 마우스 방향을 바라보고 있으므로 전방으로 발사
-        
+        if (weapon.bulletPrefab != null)
+        {
+            GameObject bulletObject = Instantiate(
+                weapon.bulletPrefab,
+                origin,
+                Quaternion.LookRotation(direction)
+            );
+
+            Bullet bullet = bulletObject.GetComponent<Bullet>();
+
+            if (bullet != null)
+            {
+                bullet.Initialize(direction, weapon.bulletSpeed);
+            }
+        }
         if (Physics.SphereCast(
             castOrigin,
             0.2f,
