@@ -8,7 +8,9 @@ public class WeaponData : ScriptableObject
     public WeaponType weaponType;
     public WeaponRangeType weaponRangeType;
     public String weaponName;
-
+    [Header("Projectile")]
+    public GameObject bulletPrefab;
+    public float bulletSpeed = 35f;
     [Header("Attack Stats")]
     public int damage = 10;
     public float attackRange = 1.8f;

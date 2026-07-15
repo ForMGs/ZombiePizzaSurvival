@@ -15,6 +15,9 @@ MonoBehaviour:
   weaponType: 3
   weaponRangeType: 2
   weaponName: Pistol
+  bulletPrefab: {fileID: 4851257874886425530, guid: 5e4c84817fa2fee4087d7c3ea347459a,
+    type: 3}
+  bulletSpeed: 35
   damage: 20
   attackRange: 1.8
   attackAngle: 0

@@ -135,7 +135,10 @@ public class ZombieAI : MonoBehaviour
         targetArrow.position = transform.position + directionToTarget * arrowDistance + Vector3.up * arrowGroundHeight;
         targetArrow.rotation = Quaternion.LookRotation(directionToTarget) * Quaternion.Euler(90f, arrowYawOffset, 0f);
     }
-
+    public void SetTarget(Transform newTarget)
+    {
+        target = newTarget;
+    }
     public void BeginHit()
     {
         isHit = true;
