@@ -21,6 +21,9 @@ public class ZombieHealth : MonoBehaviour
     private bool isDead;
     private static readonly int deadHash = Animator.StringToHash("Dead");
     private static readonly int hitHash = Animator.StringToHash("Hit");
+    
+    private ZombieSpawner spawner;
+
     private void Awake()
     {
         currentHealth = maxHealth;
@@ -30,6 +33,10 @@ public class ZombieHealth : MonoBehaviour
         UpdateHealthBar();
     }
 
+    public void SetSpawner(ZombieSpawner zombieSpawner)
+    {
+        spawner = zombieSpawner;
+    }
     private void LateUpdate()
     {
         UpdateHealthBarRotation();
@@ -77,10 +84,15 @@ public class ZombieHealth : MonoBehaviour
             rb.useGravity = false;
         }
         ZombieDropper dropper = GetComponent<ZombieDropper>();
-        if (dropper != null)
-            dropper.DropItem();
 
-        Destroy(gameObject,2f);
+        if (dropper != null)
+        {
+            dropper.DropItem();
+        }
+
+        spawner?.RequestRespawn();
+
+        Destroy(gameObject, 2f);
     }
 
     private void CreateHealthBar()
