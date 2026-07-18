@@ -1,0 +1,279 @@
+:root { color: rgb(72, 37, 26); }
+
+.screen {
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5%;
+    background-color: rgba(38, 24, 24, 0.72);
+}
+
+.menu-panel {
+    position: relative;
+    width: 90%;
+    height: 86%;
+    min-width: 900px;
+    min-height: 560px;
+    max-width: 1500px;
+    max-height: 850px;
+    padding: 82px 18px 18px 18px;
+    background-color: rgb(190, 65, 38);
+    border-width: 4px;
+    border-color: rgb(116, 45, 28);
+    border-radius: 35px;
+}
+
+.brand-plate {
+    position: absolute;
+    width: 440px;
+    height: 130px;
+    top: -52px;
+    left: 50%;
+    margin-left: -220px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(101, 38, 20);
+    border-width: 5px;
+    border-color: rgb(255, 191, 48);
+    border-radius: 26px;
+}
+
+.brand-small, .brand-large {
+    color: white;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: rgb(157, 26, 12);
+}
+.brand-small { font-size: 26px; }
+.brand-large { font-size: 37px; color: rgb(255, 225, 93); }
+
+.tab-header { height: 68px; flex-direction: row; align-items: flex-end; padding: 0 24px; }
+.tab-button {
+    flex-grow: 1;
+    flex-basis: 0;
+    height: 60px;
+    min-width: 0;
+    margin: 0 7px;
+    background-color: rgb(255, 239, 205);
+    color: rgb(73, 35, 25);
+    font-size: 17px;
+    -unity-font-style: bold;
+    border-width: 2px;
+    border-color: rgb(133, 66, 42);
+    border-radius: 18px 18px 5px 5px;
+}
+.tab-button:hover { background-color: rgb(255, 249, 224); }
+.tab-button--selected { background-color: rgb(237, 69, 45); color: white; border-color: rgb(255, 159, 53); }
+
+.content-area {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 14px;
+    background-color: rgb(255, 231, 190);
+    border-width: 3px;
+    border-color: rgb(255, 184, 89);
+    border-radius: 28px;
+}
+.page { flex-grow: 1; min-height: 0; flex-direction: row; overflow: hidden; }
+.orders-page { display: none; }
+.map-page { display: flex; }
+
+.map-main-panel { flex-grow: 1; min-width: 0; min-height: 0; margin-right: 14px; overflow: hidden; }
+.map-view {
+    flex-grow: 1;
+    position: relative;
+    overflow: hidden;
+    background-color: rgb(190, 199, 171);
+    border-width: 3px;
+    border-color: rgb(154, 90, 45);
+    border-radius: 18px;
+    -unity-background-scale-mode: scale-and-crop;
+}
+.map-canvas {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    transform-origin: 50% 50%;
+    -unity-background-scale-mode: scale-and-crop;
+}
+.local-map-view { background-image: url("project://database/Assets/Project/UI/esc/map.png?fileID=2800000&guid=458c2876efef9d547b6e4fdbf5da12c4&type=3#map"); }
+.map-tip { height: 34px; justify-content: center; padding-left: 16px; color: rgb(117, 64, 38); font-size: 13px; }
+
+.map-marker {
+    position: absolute;
+    width: 62px;
+    height: 62px;
+    justify-content: center;
+    color: white;
+    font-size: 13px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    border-width: 4px;
+    border-color: white;
+    border-radius: 31px;
+}
+.player-marker { left: 57%; top: 52%; background-color: rgb(218, 48, 36); }
+.quest-marker { left: 76%; top: 24%; background-color: rgb(237, 139, 28); font-size: 30px; }
+.map-callout { position: absolute; padding: 7px 12px; background-color: rgb(255, 244, 211); border-width: 2px; border-color: rgb(126, 72, 41); border-radius: 8px; -unity-font-style: bold; }
+.base-callout { left: 48%; top: 64%; }
+.quest-callout { left: 67%; top: 36%; }
+
+.map-side-panel { width: 280px; min-height: 0; margin-right: 12px; overflow: hidden; }
+.legend-panel, .side-card {
+    background-color: rgb(255, 246, 218);
+    border-width: 2px;
+    border-color: rgb(225, 154, 78);
+    border-radius: 16px;
+}
+.side-card { margin-bottom: 11px; padding: 0 10px 12px 10px; }
+.delivery-card { flex-grow: 1; min-height: 0; }
+.delivery-card .unity-scroll-view__content-container { padding-right: 4px; }
+.delivery-content { flex-grow: 1; }
+.map-actions { flex-shrink: 0; }
+.panel-title {
+    height: 40px;
+    margin: 0 -10px 10px -10px;
+    justify-content: center;
+    background-color: rgb(193, 65, 38);
+    color: white;
+    font-size: 16px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    border-radius: 13px 13px 3px 3px;
+}
+.location-row, .delivery-heading { flex-direction: row; align-items: center; }
+.location-icon, .portrait-circle { width: 52px; font-size: 34px; -unity-text-align: middle-center; }
+.portrait-circle { height: 52px; justify-content: center; background-color: rgb(240, 178, 112); border-radius: 26px; }
+.location-copy { flex-grow: 1; margin-left: 8px; }
+.location-name, .active-quest-title { font-size: 16px; -unity-font-style: bold; color: rgb(72, 35, 25); }
+.map-info { font-size: 12px; white-space: normal; color: rgb(103, 61, 42); }
+.new-badge { padding: 3px 5px; background-color: rgb(227, 65, 39); color: white; border-radius: 5px; font-size: 10px; -unity-font-style: bold; }
+.side-label { margin-top: 12px; margin-bottom: 5px; font-size: 13px; -unity-font-style: bold; }
+.destination { min-height: 45px; padding: 8px; background-color: rgb(255, 237, 193); border-radius: 8px; }
+.reward-mini-row { flex-direction: row; height: 58px; margin-bottom: 9px; }
+.reward-mini { flex-grow: 1; font-size: 11px; -unity-text-align: middle-center; -unity-font-style: bold; }
+.track-button, .accept-button {
+    flex-shrink: 0;
+    height: 50px;
+    background-color: rgb(105, 171, 40);
+    color: white;
+    font-size: 17px;
+    -unity-font-style: bold;
+    border-width: 2px;
+    border-color: rgb(62, 111, 25);
+    border-radius: 25px;
+}
+.map-button { height: 43px; margin-top: 9px; background-color: rgb(255, 239, 201); color: rgb(100, 58, 38); font-size: 14px; -unity-font-style: bold; border-color: rgb(199, 134, 62); border-radius: 21px; }
+
+.legend-panel { width: 190px; min-height: 0; padding: 0 10px 10px 10px; }
+.legend-panel .unity-scroll-view__content-container { padding-right: 4px; }
+.legend-item, .control-item { height: 38px; font-size: 13px; -unity-text-align: middle-left; }
+.controls-block { margin-top: auto; }
+.controls-block .panel-title { margin-top: 8px; }
+.control-item { height: 28px; }
+
+.quest-list-panel {
+    width: 47%;
+    min-height: 0;
+    margin-right: 18px;
+    padding: 0 12px 12px 12px;
+    background-color: rgb(249, 215, 151);
+    border-width: 2px;
+    border-color: rgb(218, 151, 66);
+    border-radius: 20px;
+}
+.orders-title { background-color: rgb(212, 139, 42); }
+.quest-list-scroll { flex-grow: 1; }
+.quest-list-scroll .unity-scroll-view__content-container { padding-right: 6px; }
+.quest-item {
+    min-height: 104px;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 7px;
+    padding: 8px 10px;
+    background-color: rgb(255, 242, 211);
+    border-width: 2px;
+    border-color: rgb(235, 190, 112);
+    border-radius: 14px;
+}
+.quest-item--selected { background-color: rgb(255, 231, 147); border-color: rgb(225, 151, 36); }
+.quest-item--locked { opacity: 0.66; }
+.quest-item-portrait {
+    width: 90px;
+    height: 86px;
+    margin-right: 14px;
+    justify-content: center;
+    background-color: rgb(245, 192, 99);
+    color: rgb(92, 49, 31);
+    font-size: 12px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    border-width: 2px;
+    border-color: rgb(221, 143, 42);
+    border-radius: 12px;
+}
+.builder-portrait { background-color: rgb(239, 181, 102); }
+.movie-portrait { background-color: rgb(249, 205, 137); }
+.diner-portrait { background-color: rgb(202, 159, 107); color: white; }
+.zombie-portrait { background-color: rgb(145, 151, 106); color: white; }
+.quest-item-text { flex-grow: 1; justify-content: center; }
+.quest-item-title { font-size: 18px; -unity-font-style: bold; color: rgb(67, 35, 25); }
+.quest-item-subtext { margin-top: 4px; font-size: 13px; color: rgb(91, 55, 39); }
+.quest-item-time { margin-top: 5px; font-size: 13px; color: rgb(202, 49, 32); -unity-font-style: bold; }
+.quest-item-status { padding: 5px 7px; background-color: rgb(231, 66, 40); color: white; font-size: 10px; -unity-font-style: bold; border-radius: 7px; }
+.progress-status { background-color: rgb(242, 242, 235); color: rgb(38, 113, 168); }
+.locked-status { background-color: rgb(115, 115, 108); }
+
+.quest-detail-panel {
+    flex-grow: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0 18px 16px 18px;
+    background-color: rgb(255, 249, 229);
+    border-width: 2px;
+    border-color: rgb(225, 165, 88);
+    border-radius: 20px;
+}
+.detail-panel-title { margin-left: -18px; margin-right: -18px; background-color: rgb(199, 66, 38); }
+.quest-detail-scroll { flex-grow: 1; min-height: 0; }
+.quest-detail-scroll .unity-scroll-view__content-container { padding-right: 5px; }
+.quest-list-scroll .unity-scroller,
+.quest-detail-scroll .unity-scroller,
+.delivery-card .unity-scroller,
+.legend-panel .unity-scroller {
+    display: none;
+}
+.quest-detail-header, .requirement-row, .reward-row { flex-direction: row; align-items: center; }
+.quest-detail-header { margin-top: 8px; }
+.quest-detail-portrait { width: 102px; height: 102px; margin-right: 18px; justify-content: center; border-radius: 14px; }
+.quest-heading { flex-grow: 1; }
+.quest-detail-title { font-size: 24px; -unity-font-style: bold; color: rgb(61, 31, 23); }
+.quest-detail-location { margin-top: 8px; font-size: 15px; -unity-font-style: bold; }
+.quest-description { min-height: 94px; margin-top: 12px; margin-left: 120px; padding: 12px 15px; background-color: rgb(255, 241, 211); font-size: 14px; white-space: normal; border-width: 1px; border-color: rgb(235, 202, 145); border-radius: 12px; }
+.section-rule { height: 1px; margin-top: 14px; background-color: rgb(225, 191, 137); }
+.sub-title { margin-top: 10px; margin-bottom: 7px; font-size: 15px; -unity-font-style: bold; }
+.requirement-row { min-height: 88px; padding: 5px 16px; }
+.required-item-icon { width: 92px; height: 72px; margin-right: 18px; justify-content: center; background-color: rgb(241, 132, 39); color: white; font-size: 15px; -unity-text-align: middle-center; -unity-font-style: bold; border-radius: 36px; }
+.requirement-copy { flex-grow: 1; }
+.requirement-caption { font-size: 14px; }
+.requirement-text { margin-top: 6px; font-size: 17px; -unity-font-style: bold; color: rgb(194, 56, 37); }
+.reward-row { height: 106px; margin-bottom: 12px; }
+.reward-card { flex-grow: 1; height: 98px; margin-right: 9px; justify-content: center; background-color: rgb(255, 238, 201); color: rgb(73, 38, 27); font-size: 15px; border-width: 2px; border-color: rgb(233, 200, 138); border-radius: 12px; -unity-text-align: middle-center; -unity-font-style: bold; }
+.accept-button { width: 310px; height: 52px; align-self: center; margin-top: 8px; }
+
+@media (max-width: 1200px) {
+    .legend-panel { display: none; }
+    .map-side-panel { width: 260px; }
+    .brand-plate { width: 390px; margin-left: -195px; }
+    .quest-list-panel { width: 43%; }
+    .quest-item-portrait { width: 68px; }
+    .quest-item-title { font-size: 15px; }
+    .quest-description { margin-left: 0; }
+}
+#MainController {
+    display: none;
+}
