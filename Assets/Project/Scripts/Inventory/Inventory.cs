@@ -192,6 +192,46 @@ public class Inventory : MonoBehaviour
             : 0;
     }
 
+    public int GetAmount(ItemData item)
+    {
+        if (item == null || slots == null)
+            return 0;
+
+        int total = 0;
+
+        for (int i = 0; i < slots.Length; i++)
+        {
+            InventorySlotData slot = slots[i];
+
+            if (!slot.IsEmpty && slot.item == item)
+                total += slot.amount;
+        }
+
+        return total;
+    }
+
+    public bool HasItem(ItemData item, int amount)
+    {
+        return item != null && amount > 0 && GetAmount(item) >= amount;
+    }
+
+    public bool RemoveItem(ItemData item, int amount)
+    {
+        if (!HasItem(item, amount) || !RemoveFromSlots(item, amount))
+            return false;
+
+        if (TryGetItemType(item, out ItemType itemType) && items.ContainsKey(itemType))
+        {
+            items[itemType] -= amount;
+
+            if (items[itemType] <= 0)
+                items.Remove(itemType);
+        }
+
+        Changed?.Invoke();
+        return true;
+    }
+
     public bool IsValidIndex(int index)
     {
         return slots != null &&
