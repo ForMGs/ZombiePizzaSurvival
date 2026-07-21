@@ -35,40 +35,38 @@ Assets/LowPolyZombiePack
 ## 2. 전체 폴더 구조
 
 ```text
-Assets
-└── _Project
-    ├── Animations
-    ├── Art
-    │   ├── Characters
-    │   ├── Icons (추가 2026-07-09)
-    │   ├── Zombies
-    │   ├── Props
-    │   ├── Weapons
-    │   └── PizzaMachine
-    ├── Audio
-    ├── Effects
-    ├── Materials
-    ├── Prefabs
-    │   ├── Player
-    │   ├── Zombies
-    │   ├── Items
-    │   ├── Weapons
-    │   └── Base
-    ├── Scenes
-    ├── Scripts
-    │   ├── Player
-    │   ├── Zombie
-    │   ├── Combat
-    │   ├── Delivery
-    │   ├── Farming
-    │   ├── Inventory
-    │   ├── Crafting
-    │   ├── Upgrade
-    │   ├── item (추가 2026-07-10)
-    │   ├── UI
-    │   └── Save
-    ├── ScriptableObjects
-    └── UI
+ZombiePizzaSurvival/
+├─ Assets/                 게임 리소스와 프로젝트 코드
+│  └─ Project/
+│     ├─ Animations/       캐릭터 애니메이션
+│     ├─ Art/              모델, 텍스처, 아이콘
+│     ├─ Audio/            사운드 리소스
+│     ├─ Data/             아이템·무기·퀘스트 데이터
+│     ├─ Editor/           Unity 에디터 확장
+│     ├─ Effects/          시각 효과
+│     ├─ Fonts/            한글 및 UI 폰트
+│     ├─ Materials/        게임 머티리얼
+│     ├─ Prefabs/          환경·아이템·무기·좀비 프리팹
+│     ├─ Scenes/           메인 및 테스트 씬
+│     ├─ ScriptableObjects/ ScriptableObject 관련 리소스
+│     ├─ Scripts/          게임 코드
+│     │  ├─ Camera/        카메라 제어
+│     │  ├─ Combat/        전투 관리
+│     │  ├─ Crafting/      제작 시스템
+│     │  ├─ Delivery/      배달 시스템
+│     │  ├─ Farming/       아이템 드롭
+│     │  ├─ Inventory/     인벤토리
+│     │  ├─ Item/          아이템 데이터와 획득
+│     │  ├─ Player/        플레이어 조작과 상태
+│     │  ├─ Quest/         퀘스트·조건·지역·진행 기록
+│     │  ├─ QuickSlot/     퀵슬롯
+│     │  ├─ Save/          저장 시스템용 폴더
+│     │  ├─ UI/            HUD와 메뉴 UI
+│     │  ├─ Upgrade/       업그레이드 시스템
+│     │  ├─ Weapon/        무기 시스템
+│     │  └─ Zombie/        좀비 AI와 스폰
+│     └─ UI/
+│        └─ esc/           ESC 메뉴 UXML·USS·지도
 ```
 
 ---
