@@ -20,6 +20,8 @@ public class Inventory : MonoBehaviour
     public IReadOnlyDictionary<ItemType, int> Items => items;
 
     public event Action Changed;
+    // 퀘스트의 '아이템을 한 번이라도 획득' 조건에서 실제 획득량을 기록합니다.
+    public event Action<ItemData, int> ItemAdded;
 
     private void Awake()
     {
@@ -53,6 +55,10 @@ public class Inventory : MonoBehaviour
         if (item == null || amount <= 0)
             return false;
 
+        // 일부만 넣고 월드 아이템이 남는 중복 획득 문제를 막기 위해 전부 들어갈 때만 추가합니다.
+        if (GetAvailableCapacity(item) < amount)
+            return false;
+
         int remainingAmount = amount;
 
         // 기존 스택에 먼저 합치기
@@ -81,6 +87,7 @@ public class Inventory : MonoBehaviour
                 if (remainingAmount <= 0)
                 {
                     SyncLegacyAmount(item, amount);
+                    ItemAdded?.Invoke(item, amount);
                     Changed?.Invoke();
                     return true;
                 }
@@ -107,6 +114,7 @@ public class Inventory : MonoBehaviour
             if (remainingAmount <= 0)
             {
                 SyncLegacyAmount(item, amount);
+                ItemAdded?.Invoke(item, amount);
                 Changed?.Invoke();
                 return true;
             }
@@ -118,6 +126,7 @@ public class Inventory : MonoBehaviour
         if (actuallyAdded > 0)
         {
             SyncLegacyAmount(item, actuallyAdded);
+            ItemAdded?.Invoke(item, actuallyAdded);
             Changed?.Invoke();
         }
 
@@ -294,6 +303,23 @@ public class Inventory : MonoBehaviour
         }
 
         return false;
+    }
+
+    private int GetAvailableCapacity(ItemData item)
+    {
+        if (item == null || slots == null)
+            return 0;
+
+        int available = 0;
+        foreach (InventorySlotData slot in slots)
+        {
+            if (slot.IsEmpty)
+                available += item.stackable ? item.maxStack : 1;
+            else if (item.stackable && slot.item == item)
+                available += Mathf.Max(0, item.maxStack - slot.amount);
+        }
+
+        return available;
     }
 
     private void SyncLegacyAmount(
