@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25df188af68714b4ab6b9f42698a09dd, type: 3}
   m_Name: HungryGrandmaQuest
   m_EditorClassIdentifier: 
-  questId: 
+  questId: hungry_grandma
   title: "\uBC30\uACE0\uD508 \uD560\uBA38\uB2C8\uC5D0\uAC8C \uD53C\uC790\uB97C..."
   customerName: "\uBC30\uACE0\uD508\uD560\uB9E4"
   description: "\uD560\uBA38\uB2C8\uAC00 \uAD76\uACE0 \uC788\uB2E4.. \uD53C\uC790\uB97C
     \uC918\uB77C..."
-  destinationId: 
-  destinationName: 
+  destinationId: grandma_house
+  destinationName: "\uD560\uBA38\uB2C8\uC9D1"
   timeLimitSeconds: 900
-  requiredItem: {fileID: 0}
+  requiredItem: {fileID: 11400000, guid: 2f18e6d26546a474abefb7bcdc284cf0, type: 2}
   requiredAmount: 1
   coinReward: 250
   experienceReward: 150
