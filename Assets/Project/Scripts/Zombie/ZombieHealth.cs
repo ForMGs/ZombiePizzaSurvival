@@ -55,7 +55,6 @@ public class ZombieHealth : MonoBehaviour
 
         UpdateHealthBar();
 
-        Debug.Log($"Zombie HP: {currentHealth}");
 
         if (currentHealth <= 0)
         {
