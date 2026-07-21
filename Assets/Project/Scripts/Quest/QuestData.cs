@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Quest", menuName = "Game/Quest Data")]
@@ -8,6 +9,11 @@ public sealed class QuestData : ScriptableObject
     public string title;
     public string customerName;
     [TextArea(3, 6)] public string description;
+
+    [Header("등장 조건")]
+    [Tooltip("조건이 없으면 게임 시작부터 수주할 수 있습니다.")]
+    public QuestConditionMode conditionMode = QuestConditionMode.All;
+    public List<QuestCondition> conditions = new();
 
     [Header("Delivery")]
     public string destinationId;

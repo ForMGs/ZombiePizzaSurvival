@@ -28,9 +28,10 @@ public sealed class DeliveryPoint : MonoBehaviour
         if (!playerInRange || !Input.GetKeyDown(deliverKey) || questManager == null)
             return;
 
-        bool completed = questManager.TryCompleteDelivery(destinationId);
+        // 같은 목적지에 연결된 활성 퀘스트를 인벤토리 수량만큼 함께 검사합니다.
+        int completedCount = questManager.TryCompleteDeliveries(destinationId);
 
-        if (completed && deliveryPrompt != null)
+        if (completedCount > 0 && deliveryPrompt != null)
             deliveryPrompt.SetActive(false);
     }
 
