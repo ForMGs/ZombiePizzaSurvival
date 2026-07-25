@@ -8,7 +8,7 @@
             </ui:VisualElement>
 
             <ui:VisualElement name="TabHeader" class="tab-header">
-                <ui:Button text="ORDERS" name="DailyMenuButton" class="tab-button" />
+                <ui:Button text="퀘스트" name="DailyMenuButton" class="tab-button" />
                 <ui:Button text="UPGRADES" name="UpgradesButton" class="tab-button" />
                 <ui:Button text="MAP" name="MapButton" class="tab-button tab-button--selected" />
                 <ui:Button text="CHALLENGES" name="ChallengesButton" class="tab-button" />
@@ -18,84 +18,51 @@
             <ui:VisualElement name="ContentArea" class="content-area">
                 <ui:VisualElement name="OrdersPage" class="page orders-page">
                     <ui:VisualElement name="QuestListPanel" class="quest-list-panel">
-                        <ui:Label text="ORDERS RECEIVED" class="panel-title orders-title" />
-                        <ui:ScrollView name="QuestListScroll" class="quest-list-scroll" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden">
-                            <ui:VisualElement class="quest-item quest-item--selected">
-                                <ui:Label text="GRANDMA" class="quest-item-portrait grandma-portrait" />
-                                <ui:VisualElement class="quest-item-text">
-                                    <ui:Label text="HUNGRY GRANDMA" class="quest-item-title" />
-                                    <ui:Label text="PIN  Sunset Street 12" class="quest-item-subtext" />
-                                    <ui:Label text="CLOCK  Time Limit: 15:00" class="quest-item-time" />
-                                </ui:VisualElement>
-                                <ui:Label text="NEW" class="quest-item-status" />
+                        <ui:Label text="퀘스트 목록" class="panel-title orders-title" />
+                        <ui:ScrollView name="QuestListScroll" class="quest-list-scroll" vertical-scroller-visibility="Auto" horizontal-scroller-visibility="Hidden">
+                            <ui:VisualElement class="quest-section">
+                                <ui:Button text="▼ 수주 가능 퀘스트 (0)" name="AvailableSectionButton" class="quest-section-button" />
+                                <ui:VisualElement name="AvailableQuestList" class="quest-section-content" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="quest-item">
-                                <ui:Label text="BUILDER" class="quest-item-portrait builder-portrait" />
-                                <ui:VisualElement class="quest-item-text">
-                                    <ui:Label text="BUILD SITE DELIVERY" class="quest-item-title" />
-                                    <ui:Label text="PIN  Construction Zone" class="quest-item-subtext" />
-                                    <ui:Label text="CLOCK  Time Limit: 20:00" class="quest-item-time" />
-                                </ui:VisualElement>
-                                <ui:Label text="IN PROGRESS" class="quest-item-status progress-status" />
+                            <ui:VisualElement class="quest-section">
+                                <ui:Button text="▼ 진행 중인 퀘스트 (0)" name="ActiveSectionButton" class="quest-section-button" />
+                                <ui:VisualElement name="ActiveQuestList" class="quest-section-content" />
                             </ui:VisualElement>
-                            <ui:VisualElement class="quest-item">
-                                <ui:Label text="MOVIE" class="quest-item-portrait movie-portrait" />
-                                <ui:VisualElement class="quest-item-text">
-                                    <ui:Label text="MOVIE NIGHT FEAST" class="quest-item-title" />
-                                    <ui:Label text="PIN  Riverside Apartments" class="quest-item-subtext" />
-                                    <ui:Label text="CLOCK  Time Limit: 18:00" class="quest-item-time" />
-                                </ui:VisualElement>
-                                <ui:Label text="NEW" class="quest-item-status" />
-                            </ui:VisualElement>
-                            <ui:VisualElement class="quest-item">
-                                <ui:Label text="DINER" class="quest-item-portrait diner-portrait" />
-                                <ui:VisualElement class="quest-item-text">
-                                    <ui:Label text="LATE NIGHT CRAVING" class="quest-item-title" />
-                                    <ui:Label text="PIN  Dark Alley Diner" class="quest-item-subtext" />
-                                    <ui:Label text="CLOCK  Time Limit: 12:00" class="quest-item-time" />
-                                </ui:VisualElement>
-                                <ui:Label text="NEW" class="quest-item-status" />
-                            </ui:VisualElement>
-                            <ui:VisualElement class="quest-item quest-item--locked">
-                                <ui:Label text="ZOMBIE" class="quest-item-portrait zombie-portrait" />
-                                <ui:VisualElement class="quest-item-text">
-                                    <ui:Label text="ZOMBIE HUNTER PACK" class="quest-item-title" />
-                                    <ui:Label text="PIN  Survivor Camp" class="quest-item-subtext" />
-                                    <ui:Label text="CLOCK  Time Limit: 25:00" class="quest-item-time" />
-                                </ui:VisualElement>
-                                <ui:Label text="LOCKED" class="quest-item-status locked-status" />
+                            <ui:VisualElement class="quest-section">
+                                <ui:Button text="▼ 완료한 퀘스트 (0)" name="CompletedSectionButton" class="quest-section-button" />
+                                <ui:VisualElement name="CompletedQuestList" class="quest-section-content" />
                             </ui:VisualElement>
                         </ui:ScrollView>
                     </ui:VisualElement>
                     <ui:VisualElement name="QuestDetailPanel" class="quest-detail-panel">
-                        <ui:Label text="ORDER DETAILS" class="panel-title detail-panel-title" />
+                        <ui:Label text="퀘스트 상세 정보" class="panel-title detail-panel-title" />
                         <ui:ScrollView name="QuestDetailScroll" class="quest-detail-scroll" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden">
                             <ui:VisualElement name="QuestDetailHeader" class="quest-detail-header">
-                                <ui:Label text="GRANDMA" name="QuestDetailPortrait" class="quest-detail-portrait grandma-portrait" />
+                                <ui:Label text="의뢰인" name="QuestDetailPortrait" class="quest-detail-portrait grandma-portrait" />
                                 <ui:VisualElement class="quest-heading">
-                                    <ui:Label text="HUNGRY GRANDMA" name="QuestDetailTitle" class="quest-detail-title" />
-                                    <ui:Label text="PIN  Sunset Street 12" name="QuestLocation" class="quest-detail-location" />
+                                    <ui:Label text="퀘스트를 선택하세요" name="QuestDetailTitle" class="quest-detail-title" />
+                                    <ui:Label text="목적지" name="QuestLocation" class="quest-detail-location" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
-                            <ui:Label text="My oven's busted and I'm starving!&#10;Please deliver a hot pizza before I turn into a zombie...&#10;I'll make it worth your while!" name="QuestDescription" class="quest-description" />
+                            <ui:Label text="왼쪽 목록에서 확인할 퀘스트를 선택하세요." name="QuestDescription" class="quest-description" />
                             <ui:VisualElement class="section-rule" />
-                            <ui:Label text="DELIVERY REQUIREMENTS" class="sub-title" />
+                            <ui:Label text="배달 요구 사항" class="sub-title" />
                             <ui:VisualElement name="RequirementRow" class="requirement-row">
-                                <ui:Label text="PIZZA" name="RequiredItemIcon" class="required-item-icon" />
+                                <ui:Label text="아이템" name="RequiredItemIcon" class="required-item-icon" />
                                 <ui:VisualElement class="requirement-copy">
-                                    <ui:Label text="Deliver the following pizza:" class="requirement-caption" />
-                                    <ui:Label text="1 x Mamma's Margherita" name="RequiredItemText" class="requirement-text" />
+                                    <ui:Label text="다음 아이템을 배달하세요:" class="requirement-caption" />
+                                    <ui:Label text="필요 아이템" name="RequiredItemText" class="requirement-text" />
                                 </ui:VisualElement>
                             </ui:VisualElement>
                             <ui:VisualElement class="section-rule" />
-                            <ui:Label text="REWARDS" class="sub-title" />
+                            <ui:Label text="보상" class="sub-title" />
                             <ui:VisualElement name="RewardRow" class="reward-row">
-                                <ui:Label text="$ 250  COINS" name="CoinReward" class="reward-card" />
-                                <ui:Label text="* 150  EXP" name="ExpReward" class="reward-card" />
-                                <ui:Label text="P 2  REPUTATION" name="ReputationReward" class="reward-card" />
+                                <ui:Label text="코인 0" name="CoinReward" class="reward-card" />
+                                <ui:Label text="경험치 0" name="ExpReward" class="reward-card" />
+                                <ui:Label text="평판 0" name="ReputationReward" class="reward-card" />
                             </ui:VisualElement>
                         </ui:ScrollView>
-                        <ui:Button text="ACCEPT ORDER  &gt;" name="AcceptQuestButton" class="accept-button" />
+                        <ui:Button text="퀘스트 수락" name="AcceptQuestButton" class="accept-button" />
                     </ui:VisualElement>
                 </ui:VisualElement>
 

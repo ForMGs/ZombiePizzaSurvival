@@ -189,6 +189,29 @@
 .orders-title { background-color: rgb(212, 139, 42); }
 .quest-list-scroll { flex-grow: 1; }
 .quest-list-scroll .unity-scroll-view__content-container { padding-right: 6px; }
+.quest-section { margin-bottom: 10px; }
+.quest-section-button {
+    height: 42px;
+    margin-bottom: 7px;
+    padding-left: 14px;
+    background-color: rgb(184, 108, 39);
+    color: white;
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-left;
+    border-width: 1px;
+    border-color: rgb(139, 76, 30);
+    border-radius: 10px;
+}
+.quest-section-content { flex-direction: column; }
+.quest-empty-label {
+    min-height: 54px;
+    margin-bottom: 7px;
+    justify-content: center;
+    color: rgb(123, 84, 57);
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
 .quest-item {
     min-height: 104px;
     flex-direction: row;

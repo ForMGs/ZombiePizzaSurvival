@@ -48,7 +48,6 @@ public class ZombieAI : MonoBehaviour
             UpdateTargetArrow(false);
             return;
         }
-        Debug.Log("isHit: " + isHit + ", isAttacking: " + isAttacking);
         if(isHit || isAttacking)
         {
             animator?.SetFloat(SpeedHash, 0f);
@@ -109,7 +108,6 @@ public class ZombieAI : MonoBehaviour
             playerHealth.TakeDamage(attackDamage);
         }
 
-        Debug.Log("Zombie Attack");
     }
 
     private void UpdateTargetArrow(bool isVisible)
