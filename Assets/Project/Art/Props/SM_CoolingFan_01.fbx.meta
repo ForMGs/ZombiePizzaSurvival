@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cb6195e58bcabd544a1e06959d5e93ce
+guid: f79e4a5df848a1e4abc50e84217d56ef
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,10 +7,10 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Wall
-    second: {fileID: 2100000, guid: 21de5a53496a113449b592f971f810ec, type: 2}
+      name: Material.013
+    second: {fileID: 2100000, guid: a070451a1fec9b84484c0b8d7f47583e, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -40,7 +40,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
     importPhysicalCameras: 1

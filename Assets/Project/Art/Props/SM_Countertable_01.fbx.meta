@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cb6195e58bcabd544a1e06959d5e93ce
+guid: df1d83d6bc5853643b9cfbccc7d7cc39
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,10 +7,10 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Wall
-    second: {fileID: 2100000, guid: 21de5a53496a113449b592f971f810ec, type: 2}
+      name: Countertable_01
+    second: {fileID: 2100000, guid: f21de79ecaa85de429eb750920b014e5, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 1
     materialName: 0
     materialSearch: 1
     materialLocation: 1
