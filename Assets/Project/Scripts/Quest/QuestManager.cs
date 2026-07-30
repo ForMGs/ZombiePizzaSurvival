@@ -32,6 +32,7 @@ public sealed class QuestManager : MonoBehaviour
     public int Reputation => reputation;
 
     public event Action<QuestRuntime> QuestChanged;
+    public event Action<QuestRuntime> QuestAccepted;
     public event Action QuestsChanged;
     public event Action<int, int, int> RewardsChanged;
     public event Action<string> MessageRaised;
@@ -55,26 +56,43 @@ public sealed class QuestManager : MonoBehaviour
         conditionEvaluator = new QuestConditionEvaluator(
             playerInventory, progressTracker, regionManager, this);
         ValidateQuestData();
+        LogQuestDiagnostics();
     }
 
     private void OnEnable()
     {
         if (playerInventory != null)
+        {
             playerInventory.Changed += RefreshAllObjectiveStates;
+            playerInventory.ItemAdded += OnItemAdded;
+        }
         if (progressTracker != null)
             progressTracker.ProgressChanged += NotifyQuestListChanged;
         if (regionManager != null)
             regionManager.RegionDiscovered += OnRegionDiscovered;
+
+        QuestProgressEvents.ZombieKilled += OnZombieKilled;
+        QuestProgressEvents.UiOpened += OnUiOpened;
+        QuestProgressEvents.UiClicked += OnUiClicked;
+        QuestProgressEvents.Interacted += OnInteracted;
     }
 
     private void OnDisable()
     {
         if (playerInventory != null)
+        {
             playerInventory.Changed -= RefreshAllObjectiveStates;
+            playerInventory.ItemAdded -= OnItemAdded;
+        }
         if (progressTracker != null)
             progressTracker.ProgressChanged -= NotifyQuestListChanged;
         if (regionManager != null)
             regionManager.RegionDiscovered -= OnRegionDiscovered;
+
+        QuestProgressEvents.ZombieKilled -= OnZombieKilled;
+        QuestProgressEvents.UiOpened -= OnUiOpened;
+        QuestProgressEvents.UiClicked -= OnUiClicked;
+        QuestProgressEvents.Interacted -= OnInteracted;
     }
 
     private void Update()
@@ -84,6 +102,9 @@ public sealed class QuestManager : MonoBehaviour
         {
             QuestRuntime runtime = activeQuests[i];
             if (!IsInProgress(runtime.State))
+                continue;
+
+            if (runtime.Data.timeLimitSeconds <= 0f)
                 continue;
 
             runtime.RemainingTime = Mathf.Max(0f, runtime.RemainingTime - Time.deltaTime);
@@ -136,15 +157,19 @@ public sealed class QuestManager : MonoBehaviour
 
         QuestRuntime runtime = new(questData)
         {
-            State = QuestState.Accepted,
+            State = QuestState.Preparing,
             RemainingTime = questData.timeLimitSeconds
         };
 
         activeQuests.Add(runtime);
+        // 수락 순간에 한 번만 필요한 스폰, 연출, 사운드가 반응할 수 있게 알립니다.
+        QuestAccepted?.Invoke(runtime);
+        InitializeObjectiveState(runtime);
         RefreshObjectiveState(runtime);
         QuestChanged?.Invoke(runtime);
         QuestsChanged?.Invoke();
         MessageRaised?.Invoke($"퀘스트를 수락했습니다: {questData.title}");
+        TryCompleteIfObjectivesFinished(runtime);
         return true;
     }
 
@@ -164,21 +189,45 @@ public sealed class QuestManager : MonoBehaviour
     public int TryCompleteDeliveries(string destinationId)
     {
         int completedCount = 0;
-        List<QuestRuntime> candidates = activeQuests.FindAll(runtime =>
-            IsInProgress(runtime.State) &&
-            string.Equals(runtime.Data.destinationId, destinationId, StringComparison.Ordinal));
+        List<QuestRuntime> candidates = activeQuests.FindAll(runtime => IsInProgress(runtime.State));
 
         // 같은 목적지의 퀘스트가 여러 개면 인벤토리 수량이 허용하는 만큼 차례대로 완료합니다.
         foreach (QuestRuntime runtime in candidates)
         {
             QuestData data = runtime.Data;
-            if (playerInventory == null || !playerInventory.HasItem(data.requiredItem, data.requiredAmount))
-                continue;
-            if (!playerInventory.RemoveItem(data.requiredItem, data.requiredAmount))
-                continue;
+            bool progressed = false;
 
-            CompleteQuest(runtime);
-            completedCount++;
+            foreach (QuestObjectiveProgress progress in runtime.Objectives)
+            {
+                QuestObjective objective = progress.Objective;
+                if (objective.Type != QuestObjectiveType.DeliverItem ||
+                    progress.IsComplete || !objective.MatchesTarget(destinationId))
+                    continue;
+
+                if (objective.Item != null &&
+                    (playerInventory == null ||
+                     !playerInventory.RemoveItem(objective.Item, objective.RequiredAmount)))
+                    continue;
+
+                progressed |= progress.SetComplete();
+            }
+
+            // Objectives가 비어 있는 기존 배달 데이터도 계속 동작합니다.
+            if (!runtime.HasObjectives &&
+                string.Equals(data.destinationId, destinationId, StringComparison.Ordinal) &&
+                playerInventory != null && data.requiredItem != null &&
+                playerInventory.RemoveItem(data.requiredItem, data.requiredAmount))
+            {
+                CompleteQuest(runtime);
+                completedCount++;
+                continue;
+            }
+
+            if (progressed)
+            {
+                completedCount++;
+                NotifyRuntimeProgress(runtime);
+            }
         }
 
         if (completedCount == 0)
@@ -246,6 +295,23 @@ public sealed class QuestManager : MonoBehaviour
         if (runtime == null || !IsInProgress(runtime.State))
             return;
 
+        if (runtime.HasObjectives)
+        {
+            bool hasPendingDelivery = false;
+            foreach (QuestObjectiveProgress progress in runtime.Objectives)
+            {
+                if (progress.Objective.Type == QuestObjectiveType.DeliverItem && !progress.IsComplete)
+                {
+                    hasPendingDelivery = true;
+                    break;
+                }
+            }
+
+            runtime.State = hasPendingDelivery ? QuestState.Delivering : QuestState.Preparing;
+            QuestChanged?.Invoke(runtime);
+            return;
+        }
+
         QuestData data = runtime.Data;
         bool hasRequiredItem = playerInventory != null &&
                                playerInventory.HasItem(data.requiredItem, data.requiredAmount);
@@ -263,7 +329,96 @@ public sealed class QuestManager : MonoBehaviour
     }
 
     private void NotifyQuestListChanged() => QuestsChanged?.Invoke();
-    private void OnRegionDiscovered(string _) => QuestsChanged?.Invoke();
+
+    private void OnRegionDiscovered(string regionId)
+    {
+        ReportObjectiveProgress(QuestObjectiveType.ReachRegion, regionId, null, 1);
+        QuestsChanged?.Invoke();
+    }
+
+    private void OnItemAdded(ItemData item, int amount)
+    {
+        ReportObjectiveProgress(QuestObjectiveType.AcquireItem, null, item, amount);
+    }
+
+    private void OnZombieKilled(string zombieId)
+    {
+        ReportObjectiveProgress(QuestObjectiveType.KillZombie, zombieId, null, 1);
+    }
+
+    private void OnUiOpened(string uiId)
+    {
+        ReportObjectiveProgress(QuestObjectiveType.OpenUI, uiId, null, 1);
+    }
+
+    private void OnUiClicked(string actionId)
+    {
+        ReportObjectiveProgress(QuestObjectiveType.ClickUI, actionId, null, 1);
+    }
+
+    private void OnInteracted(string interactionId)
+    {
+        ReportObjectiveProgress(QuestObjectiveType.Interact, interactionId, null, 1);
+    }
+
+    private void InitializeObjectiveState(QuestRuntime runtime)
+    {
+        foreach (QuestObjectiveProgress progress in runtime.Objectives)
+        {
+            QuestObjective objective = progress.Objective;
+            if (objective.Type == QuestObjectiveType.ReachRegion &&
+                regionManager != null && regionManager.HasVisited(objective.TargetId))
+            {
+                progress.SetComplete();
+            }
+            else if (objective.Type == QuestObjectiveType.AcquireItem && progressTracker != null)
+            {
+                progress.AddProgress(progressTracker.GetAcquiredAmount(objective.Item));
+            }
+        }
+    }
+
+    private void ReportObjectiveProgress(
+        QuestObjectiveType type, string targetId, ItemData item, int amount)
+    {
+        List<QuestRuntime> snapshot = new(activeQuests);
+        foreach (QuestRuntime runtime in snapshot)
+        {
+            if (!IsInProgress(runtime.State))
+                continue;
+
+            bool changed = false;
+            foreach (QuestObjectiveProgress progress in runtime.Objectives)
+            {
+                QuestObjective objective = progress.Objective;
+                if (objective.Type != type || progress.IsComplete)
+                    continue;
+                if (item != null && objective.Item != item)
+                    continue;
+                if (item == null && !objective.MatchesTarget(targetId))
+                    continue;
+
+                changed |= progress.AddProgress(amount);
+            }
+
+            if (changed)
+                NotifyRuntimeProgress(runtime);
+        }
+    }
+
+    private void NotifyRuntimeProgress(QuestRuntime runtime)
+    {
+        RefreshObjectiveState(runtime);
+        QuestChanged?.Invoke(runtime);
+        QuestsChanged?.Invoke();
+        TryCompleteIfObjectivesFinished(runtime);
+    }
+
+    private void TryCompleteIfObjectivesFinished(QuestRuntime runtime)
+    {
+        if (runtime != null && activeQuests.Contains(runtime) && runtime.AreAllObjectivesComplete())
+            CompleteQuest(runtime);
+    }
 
     private static bool IsInProgress(QuestState state)
     {
@@ -305,6 +460,37 @@ public sealed class QuestManager : MonoBehaviour
                 Debug.LogWarning($"퀘스트 ID가 비어 있습니다: {quest.name}", quest);
             else if (!ids.Add(quest.questId))
                 Debug.LogWarning($"중복된 퀘스트 ID입니다: {quest.questId}", quest);
+        }
+    }
+
+    private void LogQuestDiagnostics()
+    {
+        Debug.Log(
+            $"[QuestDebug] QuestManager 초기화: 등록={quests.Count}, " +
+            $"완료 저장={completedQuestIds.Count}, Inventory={playerInventory != null}, " +
+            $"ProgressTracker={progressTracker != null}, RegionManager={regionManager != null}",
+            this);
+
+        for (int i = 0; i < quests.Count; i++)
+        {
+            QuestData quest = quests[i];
+            if (quest == null)
+            {
+                Debug.LogWarning($"[QuestDebug] Quests[{i}]가 비어 있습니다.", this);
+                continue;
+            }
+
+            bool completed = IsCompleted(quest.questId);
+            bool active = FindActiveQuest(quest.questId) != null;
+            bool conditionsMet = conditionEvaluator != null &&
+                                 conditionEvaluator.AreConditionsMet(quest);
+            bool available = CanAcceptQuest(quest);
+
+            Debug.Log(
+                $"[QuestDebug] Quests[{i}] name={quest.name}, id='{quest.questId}', " +
+                $"조건수={quest.conditions?.Count ?? 0}, 조건충족={conditionsMet}, " +
+                $"완료={completed}, 진행중={active}, 수주가능={available}",
+                quest);
         }
     }
 

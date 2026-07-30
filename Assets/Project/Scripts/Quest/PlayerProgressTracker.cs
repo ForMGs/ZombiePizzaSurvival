@@ -40,6 +40,14 @@ public sealed class PlayerProgressTracker : MonoBehaviour
         return acquiredAmounts.TryGetValue(item.itemId, out int current) && current >= amount;
     }
 
+    public int GetAcquiredAmount(ItemData item)
+    {
+        if (item == null || string.IsNullOrWhiteSpace(item.itemId))
+            return 0;
+
+        return acquiredAmounts.TryGetValue(item.itemId, out int current) ? current : 0;
+    }
+
     private void RecordItem(ItemData item, int amount)
     {
         if (item == null || amount <= 0 || string.IsNullOrWhiteSpace(item.itemId))

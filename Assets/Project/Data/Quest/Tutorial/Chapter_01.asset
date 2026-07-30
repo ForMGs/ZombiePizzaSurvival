@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f8a0d8ec204bf38b4cd9ac352ecf8b, type: 3}
+  m_Name: Chapter_01
+  m_EditorClassIdentifier: 
+  sequenceId: tutorial_chapter_01
+  steps:
+  - type: 1
+    quest: {fileID: 0}
+    autoAccept: 0
+    cutsceneId: opening_cutscene
+    delaySeconds: 0
+  - type: 0
+    quest: {fileID: 11400000, guid: f2357e8227f64724d841dee9e6e885e6, type: 2}
+    autoAccept: 1
+    cutsceneId: Tutorial_001
+    delaySeconds: 0
+  - type: 1
+    quest: {fileID: 0}
+    autoAccept: 0
+    cutsceneId: check_your_phone
+    delaySeconds: 0
+  - type: 0
+    quest: {fileID: 11400000, guid: 21c5f7a08e53bc948b4acea0e50e1591, type: 2}
+    autoAccept: 1
+    cutsceneId: Tutorial_002
+    delaySeconds: 0
+  - type: 1
+    quest: {fileID: 0}
+    autoAccept: 0
+    cutsceneId: strange_sound
+    delaySeconds: 0
+  - type: 0
+    quest: {fileID: 11400000, guid: 3bc39f084c972d049a7bc995e3a7ede0, type: 2}
+    autoAccept: 1
+    cutsceneId: Tutorial_003
+    delaySeconds: 0
+  - type: 1
+    quest: {fileID: 0}
+    autoAccept: 1
+    cutsceneId: Tutorial_004_dialogue
+    delaySeconds: 0
+  - type: 0
+    quest: {fileID: 11400000, guid: 796cbe4c5d117b44298d3ff6d6bc2d30, type: 2}
+    autoAccept: 1
+    cutsceneId: Tutorial_004_quest
+    delaySeconds: 0
+  - type: 2
+    quest: {fileID: 0}
+    autoAccept: 1
+    cutsceneId: delay_005
+    delaySeconds: 2
+  - type: 1
+    quest: {fileID: 0}
+    autoAccept: 1
+    cutsceneId: Tutorial_005_cutscene
+    delaySeconds: 2
+  nextSequence: {fileID: 0}
