@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cab6ee5cee554897a3de9f5d5a152954, type: 3}
+  m_Name: Tutorial_004
+  m_EditorClassIdentifier: 
+  lines:
+  - speakerName: ???
+    portrait: {fileID: 21300000, guid: 1266e5b0a438343418c0b064c00ac71e, type: 3}
+    dialogue: "\uAC15\uB825\uBD84..\uC774..\uBC31\uADF8\uB7A8.. \uBB3C \uBC31..\uC774\uC2ED
+      \uBBF8\uB9AC\uB9AC\uD130.. \uC124\uD0D5 \uC870..\uAE08 \uC18C\uAE08 \uC0AC
+      \uADF8\uB78C... \uC62C\uB9AC\uBE0C  \uC624... \uC62C\uB9AC\uBE0C \uC624\uC77C!!!! "
+  - speakerName: "\uAE40\uB8E8\uBBF8"
+    portrait: {fileID: 21300000, guid: 8d2c95a310e415446bf456ef74a0c81e, type: 3}
+    dialogue: "\uB204\uAD6C\uC57C.... !!!! \uC0AC\uC7A5\uB2D8???"
+  - speakerName: "\uC0AC\uC7A5\uB2D8"
+    portrait: {fileID: 21300000, guid: c49467e015867734aa29db898e6626fd, type: 3}
+    dialogue: "\uC5B4... \uD558\uC640\uC774\uC548 \uD53C\uC790\uC5D0 \uD30C\uC778\uC560\uD50C\uC744
+      \uBE7C\uB2EC\uB798.... \uC9C4\uC0C1\uC740...\uCC98..\uB9AC \uD55C\uB2E4."

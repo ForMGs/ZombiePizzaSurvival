@@ -28,6 +28,7 @@ public sealed class QuestUIController : MonoBehaviour
     private bool availableExpanded = true;
     private bool activeExpanded = true;
     private bool completedExpanded = true;
+    private bool hasStarted;
     private float nextTimerRefresh;
 
     private void OnEnable()
@@ -52,6 +53,12 @@ public sealed class QuestUIController : MonoBehaviour
         experienceRewardLabel = root.Q<Label>("ExpReward");
         reputationRewardLabel = root.Q<Label>("ReputationReward");
 
+        Debug.Log(
+            $"[QuestDebug] QuestUI 연결: Manager={questManager != null}, " +
+            $"AvailableList={availableList != null}, ActiveList={activeList != null}, " +
+            $"CompletedList={completedList != null}, DetailPanel={detailPanel != null}",
+            this);
+
         acceptButton?.RegisterCallback<ClickEvent>(OnAcceptClicked);
         availableSectionButton?.RegisterCallback<ClickEvent>(ToggleAvailable);
         activeSectionButton?.RegisterCallback<ClickEvent>(ToggleActive);
@@ -65,6 +72,15 @@ public sealed class QuestUIController : MonoBehaviour
             questManager.QuestChanged += RefreshRuntime;
         }
 
+        // 최초 OnEnable은 다른 오브젝트의 Awake보다 먼저 실행될 수 있습니다.
+        // Start 이후 재활성화되는 경우에만 여기서 즉시 갱신합니다.
+        if (hasStarted)
+            RefreshAll();
+    }
+
+    private void Start()
+    {
+        hasStarted = true;
         RefreshAll();
     }
 
@@ -105,6 +121,11 @@ public sealed class QuestUIController : MonoBehaviour
         List<QuestData> available = new(questManager.GetAvailableQuests());
         List<QuestRuntime> active = new(questManager.ActiveQuests);
         List<QuestData> completed = new(questManager.GetCompletedQuests());
+
+        Debug.Log(
+            $"[QuestDebug] UI 목록 갱신: Manager등록={questManager.Quests.Count}, " +
+            $"수주가능={available.Count}, 진행중={active.Count}, 완료={completed.Count}",
+            this);
 
         RebuildDataList(availableList, available, "신규");
         RebuildActiveList(active);
@@ -151,7 +172,7 @@ public sealed class QuestUIController : MonoBehaviour
 
         foreach (QuestRuntime runtime in runtimes)
         {
-            string status = runtime.State == QuestState.Delivering ? "배달 중" : "준비 중";
+            string status = GetRuntimeStatus(runtime);
             activeList.Add(CreateQuestItem(runtime.Data, status, runtime.RemainingTime));
         }
     }
@@ -170,9 +191,9 @@ public sealed class QuestUIController : MonoBehaviour
         copy.AddToClassList("quest-item-text");
         Label title = new(quest.title);
         title.AddToClassList("quest-item-title");
-        Label location = new($"목적지  {quest.destinationName}");
+        Label location = new(GetQuestSummary(quest));
         location.AddToClassList("quest-item-subtext");
-        Label timer = new($"제한 시간  {FormatTime(time)}");
+        Label timer = new(time > 0f ? $"제한 시간  {FormatTime(time)}" : "제한 시간 없음");
         timer.AddToClassList("quest-item-time");
         copy.Add(title);
         copy.Add(location);
@@ -205,10 +226,9 @@ public sealed class QuestUIController : MonoBehaviour
             return;
 
         SetText(titleLabel, selectedQuest.title);
-        SetText(locationLabel, $"목적지  {selectedQuest.destinationName}");
+        SetText(locationLabel, GetQuestSummary(selectedQuest));
         SetText(descriptionLabel, selectedQuest.description);
-        string itemName = selectedQuest.requiredItem != null ? selectedQuest.requiredItem.displayName : "필요 아이템";
-        SetText(requirementLabel, $"{itemName} {selectedQuest.requiredAmount}개");
+        SetText(requirementLabel, BuildObjectiveText(selectedQuest));
         SetText(coinRewardLabel, $"코인 {selectedQuest.coinReward}");
         SetText(experienceRewardLabel, $"경험치 {selectedQuest.experienceReward}");
         SetText(reputationRewardLabel, $"평판 {selectedQuest.reputationReward}");
@@ -278,5 +298,80 @@ public sealed class QuestUIController : MonoBehaviour
     private static void SetText(Label label, string value)
     {
         if (label != null) label.text = value;
+    }
+
+    private string BuildObjectiveText(QuestData quest)
+    {
+        QuestRuntime runtime = questManager.FindActiveQuest(quest.questId);
+        if (runtime != null && runtime.HasObjectives)
+        {
+            List<string> lines = new();
+            foreach (QuestObjectiveProgress progress in runtime.Objectives)
+            {
+                string label = GetObjectiveLabel(progress.Objective);
+                lines.Add($"{label}  {progress.CurrentAmount}/{progress.RequiredAmount}");
+            }
+            return string.Join("\n", lines);
+        }
+
+        if (quest.objectives != null && quest.objectives.Count > 0)
+        {
+            List<string> lines = new();
+            foreach (QuestObjective objective in quest.objectives)
+            {
+                if (objective != null)
+                    lines.Add($"{GetObjectiveLabel(objective)}  0/{objective.RequiredAmount}");
+            }
+            return string.Join("\n", lines);
+        }
+
+        string itemName = quest.requiredItem != null ? quest.requiredItem.displayName : "배달 아이템";
+        return $"{itemName} {quest.requiredAmount}개";
+    }
+
+    private static string GetQuestSummary(QuestData quest)
+    {
+        if (quest.objectives != null && quest.objectives.Count > 0)
+            return GetObjectiveLabel(quest.objectives[0]);
+        if (!string.IsNullOrWhiteSpace(quest.destinationName))
+            return $"목적지  {quest.destinationName}";
+        return quest.category.ToString();
+    }
+
+    private static string GetRuntimeStatus(QuestRuntime runtime)
+    {
+        if (!runtime.HasObjectives)
+            return runtime.State == QuestState.Delivering ? "배달 중" : "준비 중";
+
+        int completed = 0;
+        foreach (QuestObjectiveProgress progress in runtime.Objectives)
+            if (progress.IsComplete) completed++;
+        return $"진행 {completed}/{runtime.Objectives.Count}";
+    }
+
+    private static string GetObjectiveLabel(QuestObjective objective)
+    {
+        if (objective == null)
+            return "목표";
+        if (!string.IsNullOrWhiteSpace(objective.Description))
+            return objective.Description;
+
+        string target = string.IsNullOrWhiteSpace(objective.TargetId) ? string.Empty : $" ({objective.TargetId})";
+        return objective.Type switch
+        {
+            QuestObjectiveType.ReachRegion => $"지역 도착{target}",
+            QuestObjectiveType.KillZombie => $"좀비 처치{target}",
+            QuestObjectiveType.AcquireItem => $"{GetItemName(objective)} 획득",
+            QuestObjectiveType.DeliverItem => $"{GetItemName(objective)} 배달{target}",
+            QuestObjectiveType.OpenUI => $"UI 열기{target}",
+            QuestObjectiveType.ClickUI => $"UI 사용{target}",
+            QuestObjectiveType.Interact => $"상호작용{target}",
+            _ => "목표"
+        };
+    }
+
+    private static string GetItemName(QuestObjective objective)
+    {
+        return objective.Item != null ? objective.Item.displayName : "아이템";
     }
 }

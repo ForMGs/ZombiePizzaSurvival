@@ -1633,7 +1633,7 @@ MonoBehaviour:
     soundEffect: {fileID: 0}
     soundDelay: 0
     soundVolume: 0.2
-  nextSceneName: MainScene
+  nextSceneName: TutorialScene
   allowSkip: 1
   playbackSpeed: 1
 --- !u!4 &1873364034

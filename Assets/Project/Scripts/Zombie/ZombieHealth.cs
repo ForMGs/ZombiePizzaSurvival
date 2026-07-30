@@ -5,6 +5,8 @@ public class ZombieHealth : MonoBehaviour
 {
     [Header("Health")]
     [SerializeField] private int maxHealth = 30;
+    [Tooltip("처치 퀘스트에서 이 좀비 종류를 구분하는 ID입니다.")]
+    [SerializeField] private string questZombieId = "zombie";
 
     [Header("Health Bar")]
     [SerializeField] private bool showHealthBar = true;
@@ -67,6 +69,7 @@ public class ZombieHealth : MonoBehaviour
         if (isDead)
             return;
         isDead = true;
+        QuestProgressEvents.ReportZombieKilled(questZombieId);
         animator?.SetBool(deadHash, true);
 
         ZombieAI zombieAI = GetComponent<ZombieAI>();
