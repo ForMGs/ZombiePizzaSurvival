@@ -14,9 +14,12 @@ public sealed class TutorialSequenceRunner : MonoBehaviour
         [Tooltip("SequenceData의 Cutscene Id와 같아야 합니다.")]
         [SerializeField] private string cutsceneId;
         [SerializeField] private PlayableDirector director;
+        [Tooltip("이 컷신이 재생되는 동안 씬 BGM을 정지합니다.")]
+        [SerializeField] private bool stopBgmDuringCutscene;
 
         public string CutsceneId => cutsceneId;
         public PlayableDirector Director => director;
+        public bool StopBgmDuringCutscene => stopBgmDuringCutscene;
     }
 
     [Header("Sequence")]
@@ -42,6 +45,9 @@ public sealed class TutorialSequenceRunner : MonoBehaviour
     private bool hasStarted;
     private bool isAdvancing;
     private bool allSequencesFinished;
+    private AudioClip pausedBgmClip;
+    private float pausedBgmVolume;
+    private bool shouldResumeBgm;
 
     public int CurrentStepIndex => currentStepIndex;
     public TutorialSequenceData CurrentSequence => currentSequence;
@@ -189,7 +195,8 @@ public sealed class TutorialSequenceRunner : MonoBehaviour
 
     private void StartCutsceneStep(TutorialSequenceStep step)
     {
-        activeDirector = FindDirector(step.CutsceneId);
+        CutsceneBinding binding = FindCutsceneBinding(step.CutsceneId);
+        activeDirector = binding?.Director;
         if (activeDirector == null)
         {
             Debug.LogWarning(
@@ -203,6 +210,7 @@ public sealed class TutorialSequenceRunner : MonoBehaviour
         activeDirectorPreviousUpdateMode = activeDirector.timeUpdateMode;
         activeDirector.timeUpdateMode = DirectorUpdateMode.UnscaledGameTime;
         activeDirector.stopped += OnCutsceneStopped;
+        StopBgmForCutscene(binding);
         GameplayPause.Pause(this);
         activeDirector.Play();
         runningStep = StartCoroutine(WaitForCutscene());
@@ -232,7 +240,7 @@ public sealed class TutorialSequenceRunner : MonoBehaviour
         MoveNext();
     }
 
-    private PlayableDirector FindDirector(string cutsceneId)
+    private CutsceneBinding FindCutsceneBinding(string cutsceneId)
     {
         if (string.IsNullOrWhiteSpace(cutsceneId))
             return null;
@@ -241,10 +249,35 @@ public sealed class TutorialSequenceRunner : MonoBehaviour
         {
             if (binding != null &&
                 string.Equals(binding.CutsceneId, cutsceneId, StringComparison.Ordinal))
-                return binding.Director;
+                return binding;
         }
 
         return null;
+    }
+
+    private void StopBgmForCutscene(CutsceneBinding binding)
+    {
+        shouldResumeBgm = false;
+        if (binding == null || !binding.StopBgmDuringCutscene || AudioManager.Instance == null)
+            return;
+
+        AudioManager audioManager = AudioManager.Instance;
+        pausedBgmClip = audioManager.CurrentBgm;
+        pausedBgmVolume = audioManager.RequestedVolume;
+        shouldResumeBgm = pausedBgmClip != null && audioManager.IsPlaying;
+
+        if (shouldResumeBgm)
+            audioManager.StopBgm(0.3f);
+    }
+
+    private void ResumeBgmAfterCutscene()
+    {
+        if (!shouldResumeBgm || pausedBgmClip == null)
+            return;
+
+        AudioManager.GetOrCreate().PlayBgm(pausedBgmClip, pausedBgmVolume, 0.3f);
+        shouldResumeBgm = false;
+        pausedBgmClip = null;
     }
 
     private void MoveNext()
@@ -321,6 +354,7 @@ public sealed class TutorialSequenceRunner : MonoBehaviour
 
         activeDirector = null;
         activeCutsceneFinished = false;
+        ResumeBgmAfterCutscene();
         GameplayPause.Resume(this);
     }
 

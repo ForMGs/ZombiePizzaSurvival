@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ZombieAI : MonoBehaviour
 {
@@ -13,6 +14,10 @@ public class ZombieAI : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private int attackDamage = 10;
     [SerializeField] private float attackCooldown = 1.2f;
+    [Tooltip("공격 타격 프레임에서 데미지가 적용되는 최대 거리입니다.")]
+    [SerializeField] private float attackHitRange = 1.6f;
+    [Tooltip("좀비 정면을 기준으로 데미지가 적용되는 각도입니다.")]
+    [SerializeField, Range(0f, 360f)] private float attackHitAngle = 110f;
 
     [Header("Target Arrow")]
     [SerializeField] private Transform targetArrow;
@@ -21,16 +26,23 @@ public class ZombieAI : MonoBehaviour
     [SerializeField] private float arrowGroundHeight = 0.15f;
     [SerializeField] private float arrowYawOffset = 270f;
 
-    private Rigidbody rb;
+    private NavMeshAgent agent;
     private float lastAttackTime;
     private bool isHit;
     private bool isAttacking;
+    private bool attackHitPending;
     private Animator animator;
     private static readonly int SpeedHash = Animator.StringToHash("Speed");
     private static readonly int AttackHash = Animator.StringToHash("Attack");
+
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        agent = GetComponent<NavMeshAgent>();
+        if (agent != null)
+        {
+            agent.speed = moveSpeed;
+            agent.stoppingDistance = attackRange;
+        }
         animator = GetComponentInChildren<Animator>();
         UpdateTargetArrow(false);
     }
@@ -44,13 +56,13 @@ public class ZombieAI : MonoBehaviour
     {
         if (target == null || !target.gameObject.activeInHierarchy)
         {
-            animator?.SetFloat(SpeedHash, 0f);
+            StopMoving();
             UpdateTargetArrow(false);
             return;
         }
         if(isHit || isAttacking)
         {
-            animator?.SetFloat(SpeedHash, 0f);
+            StopMoving();
             return;
         }
 
@@ -61,7 +73,7 @@ public class ZombieAI : MonoBehaviour
 
         if (distance <= attackRange)
         {
-            animator?.SetFloat(SpeedHash,0f);
+            StopMoving();
             Attack();
         }
         else if (canSeeTarget)
@@ -71,43 +83,60 @@ public class ZombieAI : MonoBehaviour
         }
         else
         {
-            animator?.SetFloat(SpeedHash,0f);
+            StopMoving();
         }
     }
 
     private void ChaseTarget()
     {
-        Vector3 direction = target.position - transform.position;
-        direction.y = 0f;
-        direction.Normalize();
+        if (agent == null || !agent.isOnNavMesh)
+            return;
 
-        Vector3 nextPosition = rb.position + direction * moveSpeed * Time.fixedDeltaTime;
-        rb.MovePosition(nextPosition);
-
-        if (direction != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            rb.rotation = Quaternion.Slerp(rb.rotation, targetRotation, 10f * Time.fixedDeltaTime);
-        }
+        agent.isStopped = false;
+        agent.SetDestination(target.position);
     }
-
+    private void StopMoving()
+    {
+        if(agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+            agent.ResetPath();
+        }
+        animator?.SetFloat(SpeedHash, 0f);
+    }
     private void Attack()
     {
         if (Time.time < lastAttackTime + attackCooldown)
             return;
         
         isAttacking = true;
+        attackHitPending = true;
         lastAttackTime = Time.time;
         animator?.SetFloat(SpeedHash, 0f);
         animator?.SetTrigger(AttackHash);
 
+    }
+
+    public void OnAttackHit()
+    {
+        if (!isAttacking || !attackHitPending || target == null ||
+            !target.gameObject.activeInHierarchy)
+            return;
+
+        attackHitPending = false;
+
+        Vector3 directionToTarget = target.position - transform.position;
+        directionToTarget.y = 0f;
+        float distance = directionToTarget.magnitude;
+        if (distance > attackHitRange || distance <= 0.001f)
+            return;
+
+        float angle = Vector3.Angle(transform.forward, directionToTarget);
+        if (angle > attackHitAngle * 0.5f)
+            return;
+
         PlayerHealth playerHealth = target.GetComponent<PlayerHealth>();
-
-        if (playerHealth != null)
-        {
-            playerHealth.TakeDamage(attackDamage);
-        }
-
+        playerHealth?.TakeDamage(attackDamage);
     }
 
     private void UpdateTargetArrow(bool isVisible)
@@ -143,6 +172,7 @@ public class ZombieAI : MonoBehaviour
     {
         isHit = true;
         isAttacking = false;
+        attackHitPending = false;
         animator?.SetFloat(SpeedHash, 0f);
     }
     public void EndHit()
@@ -152,5 +182,6 @@ public class ZombieAI : MonoBehaviour
     public void EndAttack()
     {
         isAttacking = false;
+        attackHitPending = false;
     }
 }

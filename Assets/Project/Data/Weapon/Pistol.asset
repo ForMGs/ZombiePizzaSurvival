@@ -23,6 +23,14 @@ MonoBehaviour:
   attackAngle: 0
   attackCooldown: 1
   attackMoveLockDuration: 1.1
+  hitEffectPrefab: {fileID: 0}
+  hitSounds: []
+  hitSoundVolume: 0.8
+  swingSounds: []
+  swingSoundVolume: 0.7
+  hitStopDuration: 0.025
+  knockbackDistance: 0.18
+  knockbackDuration: 0.08
   longRangeDistance: 15
   weaponPrefab: {fileID: 3252272391936718230, guid: 7b02346e757844745a09675ac4c82190,
     type: 3}
