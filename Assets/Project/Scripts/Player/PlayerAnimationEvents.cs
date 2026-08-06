@@ -14,4 +14,9 @@ public class PlayerAnimationEvents : MonoBehaviour
     {
         playerAttack?.OnAttackHit();
     }
+
+    public void SwingSound()
+    {
+        playerAttack?.OnSwingSound();
+    }
 }

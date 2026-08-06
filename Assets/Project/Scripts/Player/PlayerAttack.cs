@@ -207,6 +207,21 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    public void OnSwingSound()
+    {
+        if (!attackPending)
+            return;
+
+        WeaponData weapon = weaponController != null
+            ? weaponController.CurrentWeapon
+            : null;
+
+        if (weapon == null || weapon.weaponType == WeaponType.Pistol)
+            return;
+
+        CombatHitFeedback.PlaySwing(transform.position, weapon);
+    }
+
     public void CancelPendingAttack()
     {
         attackPending = false;

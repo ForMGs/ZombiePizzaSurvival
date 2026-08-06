@@ -1491,6 +1491,7 @@ GameObject:
   - component: {fileID: 6985438008787849665}
   - component: {fileID: 2459847839187245102}
   - component: {fileID: 8204579362376340619}
+  - component: {fileID: 3693647762905731363}
   m_Layer: 6
   m_Name: Zombie
   m_TagString: Untagged
@@ -1613,8 +1614,8 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
@@ -1654,11 +1655,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 30
+  questZombieId: zombie
   showHealthBar: 1
   healthBarOffset: {x: 0, y: 2.4, z: 0}
   healthBarSize: {x: 1.2, y: 0.12}
   healthBarBackColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.75}
   healthBarFillColor: {r: 0.9, g: 0.15, b: 0.1, a: 0.95}
+  hitFlashColor: {r: 1, g: 0.12, b: 0.12, a: 1}
+  hitFlashDuration: 0.08
+  damageTextOffset: {x: 0, y: 2.7, z: 0}
+  damageTextColor: {r: 1, g: 0.25, b: 0.1, a: 1}
+  damageTextSize: 3
 --- !u!114 &8204579362376340619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1690,6 +1697,28 @@ MonoBehaviour:
     weight: 0
     minAmount: 0
     maxAmount: 0
+--- !u!195 &3693647762905731363
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1634420479605823200}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5000001
+  m_Speed: 3
+  m_Acceleration: 12
+  avoidancePriority: 50
+  m_AngularSpeed: 360
+  m_StoppingDistance: 1.5
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1 &1733405688328217195
 GameObject:
   m_ObjectHideFlags: 0

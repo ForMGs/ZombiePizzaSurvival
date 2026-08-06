@@ -22,6 +22,16 @@ MonoBehaviour:
   attackAngle: 120
   attackCooldown: 1
   attackMoveLockDuration: 1.3
+  hitEffectPrefab: {fileID: 0}
+  hitSounds:
+  - {fileID: 8300000, guid: 753f1bfcd75af964ba54f8f59b2decd8, type: 3}
+  hitSoundVolume: 0.725
+  swingSounds:
+  - {fileID: 8300000, guid: cae84f14527a2404bb9d085d449b7834, type: 3}
+  swingSoundVolume: 0.156
+  hitStopDuration: 0.06
+  knockbackDistance: 0.45
+  knockbackDuration: 0.14
   longRangeDistance: 12
   weaponPrefab: {fileID: 6384152341500313022, guid: aa46fc3d004cf5e4bbe64312c8efa7c1,
     type: 3}

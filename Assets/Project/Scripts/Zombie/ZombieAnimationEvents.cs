@@ -17,4 +17,9 @@ public class ZombieAnimationEvents : MonoBehaviour
     {
         zombieAI?.EndAttack();
     }
+
+    public void AttackHit()
+    {
+        zombieAI?.OnAttackHit();
+    }
 }
